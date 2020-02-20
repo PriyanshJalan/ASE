@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:text="start navigation"
         android:id="@+id/button"
+        android:onClick="startNavigationBtnClick"
         />
 
 
