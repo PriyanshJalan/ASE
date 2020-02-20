@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.View;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,6 +59,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, "sk.eyJ1IjoidG93ZXJtYWx0YSIsImEiOiJjazZreHNsODYwOHF6M2xucGlubzd3bzl0In0.ZA2ILAXrTZSF8dskXwK6aQ");
         setContentView(R.layout.activity_main);
+
+        ///////
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolBar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //////
+
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
