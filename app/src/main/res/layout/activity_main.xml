@@ -37,6 +37,32 @@
                 android:onClick="startNavigationBtnClick"
                 />
 
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_location_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="25dp"
+                android:tint="@android:color/white"
+                app:backgroundTint="@color/colorPrimary"
+                app:srcCompat="@android:drawable/ic_search_category_default" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/report"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="100dp"
+                android:tint="@android:color/white"
+                app:backgroundTint="@color/colorPrimary"
+                app:srcCompat="@drawable/ic_report_black_24dp" />
+
         </com.mapbox.mapboxsdk.maps.MapView>
 
     </RelativeLayout>
@@ -46,7 +72,7 @@
         app:menu="@menu/navigation_menu"
         android:layout_gravity="start"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 
 </androidx.drawerlayout.widget.DrawerLayout>
