@@ -2,6 +2,5 @@
     <string name="app_name">MinuteDublin</string>
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer Close</string>
-    <string name="access_token">sk.eyJ1IjoidG93ZXJtYWx0YSIsImEiOiJjazZreHNsODYwOHF6M2xucGlubzd3bzl0In0.ZA2ILAXrTZSF8dskXwK6aQ</string>
     <string name="navigation_guidance_day" translatable="false">mapbox://styles/mapbox/navigation-guidance-day-v4</string>
 </resources>
