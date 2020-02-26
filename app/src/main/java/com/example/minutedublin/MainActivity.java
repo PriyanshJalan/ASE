@@ -3,13 +3,18 @@ package com.example.minutedublin;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.google.android.material.navigation.NavigationView;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
@@ -54,6 +59,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     DirectionsRoute currentRoute;
     NavigationMapRoute navigationMapRoute;
 
+    //init variable
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
+    private NavigationView navigationView;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,15 +76,64 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolBar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //////
+
+        drawerLayout = findViewById(R.id.drawer_layout);    ///navigation
+        actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+        navigationView = findViewById(R.id.navigation_view);
+        View navView = navigationView.inflateHeaderView(R.layout.navigation_header);
+        navigationView.setItemIconTintList(null);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                UserMenuSelected(menuItem);
+                return false;
+            }
+        });
+
 
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
-
-
     }
+
+
+    //////////////three dots
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.threedots_menu,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+///
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (actionBarDrawerToggle.onOptionsItemSelected(item)){
+            return true;
+        }
+/*
+        if (item.getItemId()==R.id.show_traffic){
+            ////////////
+        }
+*/
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void UserMenuSelected(MenuItem menuItem){
+        switch (menuItem.getItemId()){
+            case R.id.nav_connection:
+                break;
+            case R.id.nav_about:
+                break;
+            case R.id.nav_dummy1:
+                break;
+            case R.id.nav_dummy2:
+                break;
+        }
+    }
+
 
     public  void startNavigationBtnClick(View v)
     {

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/show_traffic"
+          android:title="Show Traffic"></item>
+
+    <item android:id="@+id/show_transportation"
+        android:title="Show Transportation"></item>
+
+    <item android:id="@+id/show_reports"
+        android:title="Show Reports"></item>
+
+
+
+</menu>
