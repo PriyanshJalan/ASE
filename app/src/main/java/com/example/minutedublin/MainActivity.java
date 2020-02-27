@@ -331,11 +331,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (mapboxMap != null) {
                 Style style = mapboxMap.getStyle();
                 if (style != null) {
+                    com.mapbox.geojson.Point  destinationPoint = com.mapbox.geojson.Point.fromLngLat(((Point) selectedCarmenFeature.geometry()).longitude(),
+                            ((Point) selectedCarmenFeature.geometry()).latitude());
+                    com.mapbox.geojson.Point  originPoint = com.mapbox.geojson.Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
+                            locationComponent.getLastKnownLocation().getLatitude());
                     GeoJsonSource source = style.getSourceAs(geojsonSourceLayerId);
                     if (source != null) {
                         source.setGeoJson(FeatureCollection.fromFeatures(
                                 new Feature[] {Feature.fromJson(selectedCarmenFeature.toJson())}));
                     }
+                    getRoute(originPoint,destinationPoint);
 
 // Move map camera to the selected location
                     mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(
@@ -344,6 +349,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             ((Point) selectedCarmenFeature.geometry()).longitude()))
                                     .zoom(14)
                                     .build()), 4000);
+
 
 //                    com.mapbox.geojson.Point  destinationPoint = com.mapbox.geojson.Point.fromLngLat(((Point) selectedCarmenFeature.geometry()).longitude(), ((Point) selectedCarmenFeature.geometry()).latitude());
 //                    com.mapbox.geojson.Point  originPoint = com.mapbox.geojson.Point .fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
