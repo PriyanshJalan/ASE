@@ -9,9 +9,9 @@
         android:icon="@drawable/ic_about"
         android:title="About" />
 
-    <item android:id="@+id/p2penter"
+    <item android:id="@+id/nav_dummy1"
         android:icon="@drawable/ic_about"
-        android:title="p2penter" />
+        android:title="Dummy1" />
 
     <item android:id="@+id/nav_dummy2"
         android:icon="@drawable/ic_about"

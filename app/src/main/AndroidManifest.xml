@@ -15,10 +15,6 @@
         <activity android:name=".MainActivity">
         </activity>
 
-
-        <activity android:name=".Wifip2pAnimation"></activity>
-
-
         <activity android:name=".SplashActivity"
             android:theme="@style/AppTheme.SplashScreen">
             <intent-filter>

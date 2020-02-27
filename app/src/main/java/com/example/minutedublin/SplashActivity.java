@@ -29,8 +29,8 @@ public class SplashActivity extends AppCompatActivity {
         help1 = (ImageView)  findViewById(R.id.help1);
         help2 = (ImageView)  findViewById(R.id.help2);
 
-        fromtop = AnimationUtils.loadAnimation(this,R.anim.fromtop);
-        frombotton = AnimationUtils.loadAnimation(this,R.anim.frombotton);
+        fromtop = AnimationUtils.loadAnimation(this,R.layout.fromtop);
+        frombotton = AnimationUtils.loadAnimation(this,R.layout.frombotton);
 
         help2.setAnimation(frombotton);
         help1.setAnimation(fromtop);
