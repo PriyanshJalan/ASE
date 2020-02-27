@@ -1,10 +1,12 @@
 package com.example.minutedublin;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,8 +35,11 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.style.layers.LineLayer;
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+import com.mapbox.mapboxsdk.utils.BitmapUtils;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
@@ -50,6 +55,8 @@ import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import retrofit2.Call;
@@ -76,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private NavigationView navigationView;
+    private MenuItem p2penter;
 
     //////search box
     private static final int REQUEST_CODE_AUTOCOMPLETE = 1;
@@ -133,17 +141,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (actionBarDrawerToggle.onOptionsItemSelected(item)){
             return true;
         }
-/*
-        if (item.getItemId()==R.id.show_traffic){
-            ////////////
+
+        if (item.getItemId()==R.id.show_transportation){
+            Loadgeojsonfile();
+            //startActivity(new Intent(MainActivity.this, TransActivity.class));
         }
-*/
+
+//        if (item.getItemId()==R.id.show_traffic){
+//        }
+//
+//        if (item.getItemId()==R.id.show_reports){
+//        }
+
         return super.onOptionsItemSelected(item);
     }
 
     public void UserMenuSelected(MenuItem menuItem){
         switch (menuItem.getItemId()){
-            case R.id.nav_connection:
+            case R.id.p2penter:
+                startActivity(new Intent(MainActivity.this, Wifip2pAnimation.class));
                 break;
             case R.id.nav_about:
                 break;
@@ -243,15 +259,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
 
-        this.mapboxMap.setMinZoomPreference(15);
+        this.mapboxMap.setMinZoomPreference(13);
 
         mapboxMap.setStyle(getString(R.string.navigation_guidance_day), new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
+                //////search box
                 initSearchFab();
-                //addUserLocations();
-                // Add the symbol layer icon to map for future use
-
                 style.addImage(symbolIconId, BitmapFactory.decodeResource(
                         MainActivity.this.getResources(), R.drawable.mapbox_marker_icon_default));
                 // Create an empty GeoJSON source using the empty feature collection
@@ -263,13 +277,39 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 addDestinationIconLayer(style);
                 mapboxMap.addOnMapClickListener(MainActivity.this);
 
-                //////search box
+                ///geojson file read
+                try {
+                    URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com/bus_stops/bus_stops_geo_json");
+                    //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
+                    style.addImage("bus-geojson",
+                            BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_bus_stop)),
+                            true);
+//                    style.addImage("bus-geojson", BitmapFactory.decodeResource(
+//                            MainActivity.this.getResources(), R.drawable.ic_bus_stop));
+                    GeoJsonSource geoJsonSource = new GeoJsonSource("bus-geojson-source", geoJsonUrl);
+                    style.addSource(geoJsonSource);
+                    SymbolLayer busSymbolLayer = new SymbolLayer("bus-symbol-layer-id","bus-geojson-source");
+                    busSymbolLayer.setProperties(PropertyFactory.iconImage("bus-geojson"));
+                    busSymbolLayer.withProperties(iconImage("bus-geojson"),iconAllowOverlap(true),
+                            iconIgnorePlacement(true));
+                    style.addLayer(busSymbolLayer);
+                } catch (URISyntaxException exception) {
+                    Log.d("Error: ", exception.getMessage());
+                }
+
 
 
             }
         });
 
     }
+
+    private void Loadgeojsonfile() {
+//        GeoJsonSource source = new GeoJsonSource("geojson", geoJsonString);
+//        mapboxMap.addSource(source);
+//        mapboxMap.addLayer(new LineLayer("geojson", "geojson"));
+    }
+
 
     private void initSearchFab() {
         findViewById(R.id.fab_location_search).setOnClickListener(new View.OnClickListener() {

@@ -12,8 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".MainActivity">
-        </activity>
+        <activity android:name=".MainActivity"></activity>
+
+        <activity android:name=".Wifip2pAnimation"></activity>
 
         <activity android:name=".SplashActivity"
             android:theme="@style/AppTheme.SplashScreen">
