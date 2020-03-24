@@ -9,6 +9,8 @@
     <item android:id="@+id/show_reports"
         android:title="Show Reports"></item>
 
+    <item android:id="@+id/show_ways"
+        android:title="Show Ways"></item>
 
 
 </menu>

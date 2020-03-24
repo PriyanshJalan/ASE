@@ -93,6 +93,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String symbolIconId = "symbolIconId";
 
 
+    ////////
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,6 +156,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //
 //        if (item.getItemId()==R.id.show_reports){
 //        }
+        if (item.getItemId()==R.id.show_ways){
+            startActivity(new Intent(MainActivity.this, DirectionsProfileActivity.class));
+
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -204,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
         com.mapbox.geojson.Point  destinationPoint = com.mapbox.geojson.Point.fromLngLat(point.getLongitude(),point.getLatitude());
-        com.mapbox.geojson.Point  originPoint = com.mapbox.geojson.Point .fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
+        com.mapbox.geojson.Point  originPoint = com.mapbox.geojson.Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
                 locationComponent.getLastKnownLocation().getLatitude());
 
         GeoJsonSource source = mapboxMap.getStyle().getSourceAs("destination-source-id");

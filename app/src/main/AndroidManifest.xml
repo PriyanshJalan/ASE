@@ -24,6 +24,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".DirectionsProfileActivity"></activity>
+
     </application>
 
 </manifest>
