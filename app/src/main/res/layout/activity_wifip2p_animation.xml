@@ -47,7 +47,7 @@
         android:layout_marginEnd="8dp"
         android:fontFamily="@font/mmedium"
         android:text="SEND FILES"
-        android:textColor="#C36E6E"
+        android:textColor="#000000"
         android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"

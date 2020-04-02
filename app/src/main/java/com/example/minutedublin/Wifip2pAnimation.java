@@ -1,6 +1,5 @@
 package com.example.minutedublin;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -56,14 +55,6 @@ public class Wifip2pAnimation extends AppCompatActivity {
 
                 btnaddphoto.setText("FIND FRIEND");
                 btnaddphoto.setTextColor(Color.parseColor("#C36E6E"));
-
-                btnaddphoto.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent a= new Intent(Wifip2pAnimation.this,Wifip2p.class);
-                        startActivity(a);
-                    }
-                });
 
                 // pass animation
                 icstates.startAnimation(imgbounce);
