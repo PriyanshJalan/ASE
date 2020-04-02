@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ASE-master-MinuteDublin.iml" filepath="$PROJECT_DIR$/ASE-master-MinuteDublin.iml" group="MinuteDublin" />
-      <module fileurl="file://$PROJECT_DIR$/app/ASE-master-app.iml" filepath="$PROJECT_DIR$/app/ASE-master-app.iml" group="MinuteDublin/app" />
       <module fileurl="file://$PROJECT_DIR$/MinuteDublin.iml" filepath="$PROJECT_DIR$/MinuteDublin.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>

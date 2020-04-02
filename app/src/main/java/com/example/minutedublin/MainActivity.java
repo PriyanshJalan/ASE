@@ -212,9 +212,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
         com.mapbox.geojson.Point  destinationPoint = com.mapbox.geojson.Point.fromLngLat(point.getLongitude(),point.getLatitude());
-       // com.mapbox.geojson.Point  originPoint = com.mapbox.geojson.Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
-         //      locationComponent.getLastKnownLocation().getLatitude());
-        com.mapbox.geojson.Point  originPoint = com.mapbox.geojson.Point.fromLngLat(-6.254572, 53.343792);
+        com.mapbox.geojson.Point  originPoint = com.mapbox.geojson.Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
+               locationComponent.getLastKnownLocation().getLatitude());
+        //com.mapbox.geojson.Point  originPoint = com.mapbox.geojson.Point.fromLngLat(-6.254572, 53.343792);
 
         GeoJsonSource source = mapboxMap.getStyle().getSourceAs("destination-source-id");
 
@@ -382,9 +382,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (style != null) {
                     com.mapbox.geojson.Point  destinationPoint = com.mapbox.geojson.Point.fromLngLat(((Point) selectedCarmenFeature.geometry()).longitude(),
                             ((Point) selectedCarmenFeature.geometry()).latitude());
-                    //com.mapbox.geojson.Point  originPoint = com.mapbox.geojson.Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
-                    //        locationComponent.getLastKnownLocation().getLatitude());
-                    com.mapbox.geojson.Point  originPoint = com.mapbox.geojson.Point.fromLngLat(-6.254572, 53.343792);
+                    com.mapbox.geojson.Point  originPoint = com.mapbox.geojson.Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
+                            locationComponent.getLastKnownLocation().getLatitude());
+                    //com.mapbox.geojson.Point  originPoint = com.mapbox.geojson.Point.fromLngLat(-6.254572, 53.343792);
                     GeoJsonSource source = style.getSourceAs(geojsonSourceLayerId);
                     if (source != null) {
                         source.setGeoJson(FeatureCollection.fromFeatures(
