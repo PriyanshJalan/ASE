@@ -17,7 +17,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-
+        android{
+        buildToolsVersion '27.0.2'
+        compileSdkVersion 27
+        defaultConfig{XXXXXX}
+        }
         <activity android:name=".MainActivity"></activity>
         <activity android:name=".Wifip2p"></activity>
         <activity android:name=".Wifip2pAnimation"></activity>
