@@ -4,6 +4,11 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
 
     <application
         android:allowBackup="true"
@@ -12,9 +17,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        android{
+        buildToolsVersion '27.0.2'
+        compileSdkVersion 27
+        defaultConfig{XXXXXX}
+        }
         <activity android:name=".MainActivity"></activity>
-
+        <activity android:name=".Wifip2p"></activity>
         <activity android:name=".Wifip2pAnimation"></activity>
+        <activity android:name=".WiFiDirectBroadcastReceiver" ></activity>
 
         <activity android:name=".SplashActivity"
             android:theme="@style/AppTheme.SplashScreen">
