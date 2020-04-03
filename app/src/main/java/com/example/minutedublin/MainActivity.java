@@ -18,6 +18,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.JsonObject;
 import com.mapbox.android.core.permissions.PermissionsListener;
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private NavigationView navigationView;
     private MenuItem p2penter;
+    private FloatingActionButton sendreport;
 
     //////search box
     private static final int REQUEST_CODE_AUTOCOMPLETE = 1;
@@ -96,13 +98,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     ////////
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, getString(R.string.access_token));
         setContentView(R.layout.activity_main);
+
+        initView();
 
         ///////
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolBar);
@@ -130,6 +132,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapView.getMapAsync(this);
 
     }
+
+    private void initView() {
+
+        sendreport = (FloatingActionButton) findViewById(R.id.report);
+
+        sendreport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent a= new Intent(MainActivity.this,SendReport.class);
+                startActivity(a);
+            }
+        });
+    }
+
 
 
     //////////////three dots
