@@ -1,5 +1,6 @@
 package com.example.minutedublin;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -15,6 +16,8 @@ import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 //import com.mapbox.mapboxandroiddemo.R;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
@@ -58,14 +61,28 @@ public class DirectionsProfileActivity extends AppCompatActivity
     private static final String ICON_LAYER_ID = "icon-layer-id";
     private static final String ICON_SOURCE_ID = "icon-source-id";
     private static final String RED_PIN_ICON_ID = "red-pin-icon-id";
-    private MapView mapView;
-    private MapboxMap mapboxMap;
+    //private MapView mapView;
+    MapView mapView;
+    //private MapboxMap mapboxMap;
+    MapboxMap mapboxMap;
     private DirectionsRoute drivingRoute;
     private DirectionsRoute walkingRoute;
     private DirectionsRoute cyclingRoute;
     private MapboxDirections client;
-    private Point origin = Point.fromLngLat(-99.13037323366, 19.40488375253);
-    private Point destination = Point.fromLngLat(-99.167663574, 19.426984786987);
+    //private Point origin = Point.fromLngLat(-99.13037323366, 19.40488375253);
+    public static double orilat;
+    public static double orilng;
+    public static double deslat;
+    public static double deslng;
+    Intent intent = getIntent();
+    private Point origin = Point.fromLngLat(orilng, orilat);
+    private Point destination = Point.fromLngLat(deslng, deslat);
+    //private Point origin = Point.fromLngLat(-6.254572, 53.343792);
+    //private  Point origin =
+    //private Point destination = Point.fromLngLat(-6.266155, 53.350140);
+    //private LatLng markerLocation = ;
+
+   // private Point destination = Point.fromLngLat(-99.167663574, 19.426984786987);
     private String lastSelectedDirectionsProfile = DirectionsCriteria.PROFILE_DRIVING;
     private Button drivingButton;
     private Button walkingButton;
@@ -94,12 +111,12 @@ public class DirectionsProfileActivity extends AppCompatActivity
         cyclingButton = findViewById(R.id.cycling_profile_button);
 
         // Setup the MapView
-        mapView = findViewById(R.id.mapView);
+        mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
-                mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
+                mapboxMap.setStyle(getString(R.string.navigation_guidance_day), new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
 
@@ -117,6 +134,16 @@ public class DirectionsProfileActivity extends AppCompatActivity
 
                         Toast.makeText(DirectionsProfileActivity.this,
                                 R.string.instruction, Toast.LENGTH_SHORT).show();
+
+                        //final LatLng markerLocation = origin;
+                        //markerLocation.setLatitude(origin.latitude());
+
+                        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                                new CameraPosition.Builder()
+                                        .target(new LatLng(((Point) origin).latitude(),
+                                                ((Point) origin).longitude()))
+                                        .zoom(14)
+                                        .build()), 4000);
                     }
                 });
             }

@@ -95,6 +95,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String geojsonSourceLayerId = "geojsonSourceLayerId";
     private String symbolIconId = "symbolIconId";
 
+    public Point passpoint;
+
 
     ////////
 
@@ -231,6 +233,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         com.mapbox.geojson.Point  destinationPoint = com.mapbox.geojson.Point.fromLngLat(point.getLongitude(),point.getLatitude());
         com.mapbox.geojson.Point  originPoint = com.mapbox.geojson.Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
                locationComponent.getLastKnownLocation().getLatitude());
+        //passpoint = originPoint;
+        Intent intent =  new Intent(MainActivity.this,DirectionsProfileActivity.class);
+        DirectionsProfileActivity.orilat = originPoint.latitude();
+        DirectionsProfileActivity.orilng = originPoint.longitude();
+        DirectionsProfileActivity.deslat = destinationPoint.latitude();
+        DirectionsProfileActivity.deslng = destinationPoint.longitude();
+        //intent.putExtra("orilat", originPoint.latitude());
+        //intent.putExtra("orilng", originPoint.longitude());
+        //intent.putExtra("deslat", destinationPoint.latitude());
+        //intent.putExtra("deslng", destinationPoint.longitude());
+        startActivity(intent); ////////////////////////////////////////////can commend
+
         //com.mapbox.geojson.Point  originPoint = com.mapbox.geojson.Point.fromLngLat(-6.254572, 53.343792);
 
         GeoJsonSource source = mapboxMap.getStyle().getSourceAs("destination-source-id");
@@ -402,6 +416,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     com.mapbox.geojson.Point  originPoint = com.mapbox.geojson.Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
                             locationComponent.getLastKnownLocation().getLatitude());
                     //om.mapbox.geojson.Point  originPoint = com.mapbox.geojson.Point.fromLngLat(-6.254572, 53.343792);
+                    Intent intent =  new Intent(MainActivity.this,DirectionsProfileActivity.class);
+                    DirectionsProfileActivity.orilat = originPoint.latitude();
+                    DirectionsProfileActivity.orilng = originPoint.longitude();
+                    DirectionsProfileActivity.deslat = destinationPoint.latitude();
+                    DirectionsProfileActivity.deslng = destinationPoint.longitude();
+
+
                     GeoJsonSource source = style.getSourceAs(geojsonSourceLayerId);
                     if (source != null) {
                         source.setGeoJson(FeatureCollection.fromFeatures(
@@ -411,6 +432,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 // Move map camera to the selected location
+                    //final LatLng markerLocation = origin
+
                     mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(
                             new CameraPosition.Builder()
                                     .target(new LatLng(((Point) selectedCarmenFeature.geometry()).latitude(),
