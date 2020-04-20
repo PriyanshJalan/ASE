@@ -14,7 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolBar"
             android:background="@color/colorPrimary"
@@ -62,6 +61,30 @@
                 android:tint="@android:color/white"
                 app:backgroundTint="@color/colorPrimary"
                 app:srcCompat="@drawable/ic_report_black_24dp" />
+
+            <TextView
+                android:id="@+id/notification"
+
+                android:singleLine="true"
+                android:scrollHorizontally="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#C36E6E"
+
+                android:paddingLeft="16dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingRight="16dp"
+
+                android:layout_marginTop="48dp"
+
+
+
+                android:text="Alarm! Alarm! Alarm! Alarm! Alarm! Alarm! Alarm! Alarm! Alarm!"
+                android:textColor="#fff" />
 
         </com.mapbox.mapboxsdk.maps.MapView>
 

@@ -91,6 +91,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private MenuItem p2penter;
     private FloatingActionButton sendreport;
 
+    /////notification
+    private TextView notification;
+
     //////search box
     private static final int REQUEST_CODE_AUTOCOMPLETE = 1;
     private CarmenFeature home;
@@ -150,6 +153,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 startActivity(a);
             }
         });
+
+
+        ////////notification
+        notification = (TextView) this.findViewById(R.id.notification);
+        notification.setSelected(true);
+
     }
 
 
