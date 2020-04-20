@@ -1,9 +1,11 @@
 package com.example.minutedublin;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
@@ -17,6 +19,7 @@ import android.widget.Toolbar;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -176,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_bus_stop2)),
                                 true);
 //                    style.addImage("bus-geojson", BitmapFactory.decodeResource(
-//                            MainActivity.this.getResources(), R.drawable.ic_bus_stop));
+//                            MainActivity.this.getResources(), R.drawable.ic_bus_stop2));
                         GeoJsonSource geoJsonSource = new GeoJsonSource("bus-geojson-source", geoJsonUrl);
                         style.addSource(geoJsonSource);
                         SymbolLayer busSymbolLayer = new SymbolLayer("bus-symbol-layer-id","bus-geojson-source");
