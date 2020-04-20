@@ -12,5 +12,7 @@
     <item android:id="@+id/show_ways"
         android:title="Show Ways"></item>
 
+    <item android:id="@+id/show_rescue"
+        android:title="Show Rescue"></item>
 
 </menu>

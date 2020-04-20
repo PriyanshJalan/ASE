@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/bus_stops/bus_stops_geo_json");
                         //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
                         style.addImage("bus-geojson",
-                                BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_bus_stop)),
+                                BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_bus_stop2)),
                                 true);
 //                    style.addImage("bus-geojson", BitmapFactory.decodeResource(
 //                            MainActivity.this.getResources(), R.drawable.ic_bus_stop));
@@ -200,6 +200,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //        }
         if (item.getItemId()==R.id.show_ways){
             startActivity(new Intent(MainActivity.this, DirectionsProfileActivity.class));
+
+        }
+
+        if (item.getItemId()==R.id.show_rescue){
+            startActivity(new Intent(MainActivity.this, MarkerFollowingRouteActivity.class));
 
         }
 
