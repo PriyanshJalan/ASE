@@ -206,6 +206,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
 
+        if (item.getItemId()==R.id.show_rescue){
+            startActivity(new Intent(MainActivity.this, MarkerFollowingRouteActivity.class));
+
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

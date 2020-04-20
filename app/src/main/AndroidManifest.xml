@@ -33,6 +33,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".DirectionsProfileActivity" />
+        <activity android:name=".MarkerFollowingRouteActivity" />
     </application>
 
 </manifest>
