@@ -3,6 +3,7 @@ package com.example.minutedublin;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -25,10 +26,13 @@ import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.layers.Property;
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
@@ -72,8 +76,9 @@ public class DirectionsProfileActivity extends AppCompatActivity
     //private Point origin = Point.fromLngLat(-99.13037323366, 19.40488375253);
     public static double orilat;
     public static double orilng;
-    public static double deslat;
-    public static double deslng;
+    public static double deslat = 53.350140;
+    public static double deslng = -6.266155;
+    //public static int flag = 0;
     Intent intent = getIntent();
     private Point origin = Point.fromLngLat(orilng, orilat);
     private Point destination = Point.fromLngLat(deslng, deslat);
@@ -144,6 +149,27 @@ public class DirectionsProfileActivity extends AppCompatActivity
                                                 ((Point) origin).longitude()))
                                         .zoom(14)
                                         .build()), 4000);
+
+                        ///load bus stop
+                        /*
+                        try {
+                            URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/stop/train_geo_json");
+                            //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
+                            style.addImage("train-geojson",
+                                    BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_train)),
+                                    true);
+                            GeoJsonSource geoJsonSource = new GeoJsonSource("train-geojson-source", geoJsonUrl);
+                            style.addSource(geoJsonSource);
+                            SymbolLayer busSymbolLayer = new SymbolLayer("train-symbol-layer-id","train-geojson-source");
+                            busSymbolLayer.setProperties(PropertyFactory.iconImage("train-geojson"));
+                            busSymbolLayer.withProperties(iconImage("train-geojson"),iconAllowOverlap(true),
+                                    iconIgnorePlacement(true));
+                            style.addLayer(busSymbolLayer);
+                        } catch (URISyntaxException exception) {
+                            Log.d("Error: ", exception.getMessage());
+                        }
+*/
+
                     }
                 });
             }
@@ -193,6 +219,13 @@ public class DirectionsProfileActivity extends AppCompatActivity
      */
     private void initSource(@NonNull Style loadedMapStyle) {
         loadedMapStyle.addSource(new GeoJsonSource(ROUTE_SOURCE_ID));
+        /*
+        if(destination == null)
+        {
+            destination = Point.fromLngLat(-6.266155, 53.350140);
+        }
+
+         */
         GeoJsonSource iconGeoJsonSource = new GeoJsonSource(ICON_SOURCE_ID,
                 Feature.fromGeometry(Point.fromLngLat(destination.longitude(),
                         destination.latitude())));

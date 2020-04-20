@@ -166,7 +166,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         if (item.getItemId()==R.id.show_transportation){
-            Loadgeojsonfile();
+            if (mapboxMap != null) {
+                Style style = mapboxMap.getStyle();
+                if (style != null) {
+                    try {
+                        URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/bus_stops/bus_stops_geo_json");
+                        //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
+                        style.addImage("bus-geojson",
+                                BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_bus_stop)),
+                                true);
+//                    style.addImage("bus-geojson", BitmapFactory.decodeResource(
+//                            MainActivity.this.getResources(), R.drawable.ic_bus_stop));
+                        GeoJsonSource geoJsonSource = new GeoJsonSource("bus-geojson-source", geoJsonUrl);
+                        style.addSource(geoJsonSource);
+                        SymbolLayer busSymbolLayer = new SymbolLayer("bus-symbol-layer-id","bus-geojson-source");
+                        busSymbolLayer.setProperties(PropertyFactory.iconImage("bus-geojson"));
+                        busSymbolLayer.withProperties(iconImage("bus-geojson"),iconAllowOverlap(true),
+                                iconIgnorePlacement(true));
+                        style.addLayer(busSymbolLayer);
+                    } catch (URISyntaxException exception) {
+                        Log.d("Error: ", exception.getMessage());
+                    }
+                }
+            }
+            //Loadgeojsonfile();
             //startActivity(new Intent(MainActivity.this, TransActivity.class));
         }
 
@@ -318,36 +341,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mapboxMap.addOnMapClickListener(MainActivity.this);
 
                 ///geojson file read
-                try {
-                    URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com/bus_stops/bus_stops_geo_json");
-                    //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
-                    style.addImage("bus-geojson",
-                            BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_bus_stop)),
-                            true);
-//                    style.addImage("bus-geojson", BitmapFactory.decodeResource(
-//                            MainActivity.this.getResources(), R.drawable.ic_bus_stop));
-                    GeoJsonSource geoJsonSource = new GeoJsonSource("bus-geojson-source", geoJsonUrl);
-                    style.addSource(geoJsonSource);
-                    SymbolLayer busSymbolLayer = new SymbolLayer("bus-symbol-layer-id","bus-geojson-source");
-                    busSymbolLayer.setProperties(PropertyFactory.iconImage("bus-geojson"));
-                    busSymbolLayer.withProperties(iconImage("bus-geojson"),iconAllowOverlap(true),
-                            iconIgnorePlacement(true));
-                    style.addLayer(busSymbolLayer);
-                } catch (URISyntaxException exception) {
-                    Log.d("Error: ", exception.getMessage());
-                }
-
-
 
             }
         });
 
     }
 
-    private void Loadgeojsonfile() {
+    private void Loadgeojsonfile(Style style) {
 //        GeoJsonSource source = new GeoJsonSource("geojson", geoJsonString);
 //        mapboxMap.addSource(source);
 //        mapboxMap.addLayer(new LineLayer("geojson", "geojson"));
+
     }
 
 
@@ -370,24 +374,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-//    private void addUserLocations() {
-//        home = CarmenFeature.builder().text("Mapbox SF Office")
-//                .geometry(Point.fromLngLat(-122.3964485, 37.7912561))
-//                .placeName("50 Beale St, San Francisco, CA")
-//                .id("mapbox-sf")
-//                .properties(new JsonObject())
-//                .build();
-//
-//        work = CarmenFeature.builder().text("Mapbox DC Office")
-//                .placeName("740 15th Street NW, Washington DC")
-//                .geometry(Point.fromLngLat(-77.0338348, 38.899750))
-//                .id("mapbox-dc")
-//                .properties(new JsonObject())
-//                .build();
-//    }
 
     private void setUpSource(@NonNull Style loadedMapStyle) {
         loadedMapStyle.addSource(new GeoJsonSource(geojsonSourceLayerId));
+
     }
 
     private void setupLayer(@NonNull Style loadedMapStyle) {
@@ -438,7 +428,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             new CameraPosition.Builder()
                                     .target(new LatLng(((Point) selectedCarmenFeature.geometry()).latitude(),
                                             ((Point) selectedCarmenFeature.geometry()).longitude()))
-                                    .zoom(14)
+                                    .zoom(20)
                                     .build()), 4000);
 
 
