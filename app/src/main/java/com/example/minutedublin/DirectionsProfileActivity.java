@@ -76,16 +76,14 @@ public class DirectionsProfileActivity extends AppCompatActivity
     //private Point origin = Point.fromLngLat(-99.13037323366, 19.40488375253);
     public static double orilat;
     public static double orilng;
-    public static double deslat = 53.350140;
-    public static double deslng = -6.266155;
+    public static double deslat;
+    public static double deslng;
     //public static int flag = 0;
     Intent intent = getIntent();
     private Point origin = Point.fromLngLat(orilng, orilat);
     private Point destination = Point.fromLngLat(deslng, deslat);
-    //private Point origin = Point.fromLngLat(-6.254572, 53.343792);
-    //private  Point origin =
-    //private Point destination = Point.fromLngLat(-6.266155, 53.350140);
-    //private LatLng markerLocation = ;
+    //private Point origin = Point.fromLngLat(-6.237489, 53.322813);
+    //private Point destination = Point.fromLngLat(-6.261477, 53.331066);
 
    // private Point destination = Point.fromLngLat(-99.167663574, 19.426984786987);
     private String lastSelectedDirectionsProfile = DirectionsCriteria.PROFILE_DRIVING;
@@ -288,6 +286,7 @@ public class DirectionsProfileActivity extends AppCompatActivity
                             case DirectionsCriteria.PROFILE_DRIVING:
                                 routeLineSource.setGeoJson(LineString.fromPolyline(drivingRoute.geometry(),
                                         PRECISION_6));
+                                //(drivingRoute.geometry());
                                 break;
                             case DirectionsCriteria.PROFILE_WALKING:
                                 routeLineSource.setGeoJson(LineString.fromPolyline(walkingRoute.geometry(),
@@ -366,6 +365,10 @@ public class DirectionsProfileActivity extends AppCompatActivity
                         drivingRoute = response.body().routes().get(0);
                         drivingButton.setText(String.format(getString(R.string.driving_profile),
                                 String.valueOf(TimeUnit.SECONDS.toMinutes(drivingRoute.duration().longValue()))));
+                        //System.out.println(drivingRoute.geometry());
+                        Log.v("geo", drivingRoute.geometry());
+                        //System.out.print(drivingRoute.geometry());
+                        System.out.println("hhhhhhhhhhhhh");
                         if (!firstRouteDrawn) {
                             showRouteLine();
                             firstRouteDrawn = true;

@@ -58,6 +58,10 @@ public class MarkerFollowingRouteActivity extends AppCompatActivity {
     private ValueAnimator markerIconAnimator;
     private LatLng markerIconCurrentLocation;
     private List<Point> routeCoordinateList;
+    //hospital: (53.335117, -6.288370)
+    //report1: (53.327069, -6.276370)
+    //fire station: (53.322813, -6.237489)
+    //report2: (53.331066, -6.261477)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +81,7 @@ public class MarkerFollowingRouteActivity extends AppCompatActivity {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
                 MarkerFollowingRouteActivity.this.mapboxMap = mapboxMap;
-                mapboxMap.setStyle(Style.LIGHT, new Style.OnStyleLoaded() {
+                mapboxMap.setStyle(getString(R.string.navigation_guidance_day), new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
                         new LoadGeoJson(MarkerFollowingRouteActivity.this).execute();
@@ -94,18 +98,22 @@ public class MarkerFollowingRouteActivity extends AppCompatActivity {
      */
     private void initData(@NonNull FeatureCollection featureCollection) {
         if (featureCollection.features() != null) {
-            LineString lineString = (LineString) featureCollection.features().get(0).geometry();
-            if (lineString != null) {
-                routeCoordinateList = lineString.coordinates();
-                if (mapboxMap != null) {
-                    mapboxMap.getStyle(style -> {
-                        initSources(style, featureCollection);
-                        initSymbolLayer(style);
-                        initDotLinePath(style);
-                        initRunnable();
-                    });
+            //for(int i=0;i<1;i++)
+            //{
+                LineString lineString = (LineString) featureCollection.features().get(0).geometry();
+                if (lineString != null) {
+                    routeCoordinateList = lineString.coordinates();
+                    if (mapboxMap != null) {
+                        mapboxMap.getStyle(style -> {
+                            initSources(style, featureCollection);
+                            initSymbolLayer(style);
+                            initDotLinePath(style);
+                            initRunnable();
+                        });
+                    }
                 }
-            }
+            //}
+
         }
     }
 
@@ -132,10 +140,10 @@ public class MarkerFollowingRouteActivity extends AppCompatActivity {
                     }
                     markerIconAnimator = ObjectAnimator
                             .ofObject(latLngEvaluator, count == 0 || markerIconCurrentLocation == null
-                                            ? new LatLng(53.3612066254703, -6.282806396484375)
+                                            ? new LatLng(53.36614916861485, -6.2398481369018555)
                                             : markerIconCurrentLocation,
                                     new LatLng(nextLocation.latitude(), nextLocation.longitude()))
-                            .setDuration(100000);
+                            .setDuration(10000);
                     markerIconAnimator.setInterpolator(new LinearInterpolator());
 
                     markerIconAnimator.addUpdateListener(animatorUpdateListener);
@@ -182,7 +190,7 @@ public class MarkerFollowingRouteActivity extends AppCompatActivity {
      */
     private void initSymbolLayer(@NonNull Style loadedMapStyle) {
         loadedMapStyle.addImage("moving-pink-dot", BitmapUtils.getBitmapFromDrawable(
-                getResources().getDrawable(R.drawable.mapbox_marker_icon_default)));
+                getResources().getDrawable(R.drawable.ic_ambulance)));
 
         loadedMapStyle.addLayer(new SymbolLayer("symbol-layer-id", DOT_SOURCE_ID).withProperties(
                 iconImage("moving-pink-dot"),
@@ -197,7 +205,8 @@ public class MarkerFollowingRouteActivity extends AppCompatActivity {
      */
     private void initDotLinePath(@NonNull Style loadedMapStyle) {
         loadedMapStyle.addLayer(new LineLayer("line-layer-id", LINE_SOURCE_ID).withProperties(
-                lineColor(Color.parseColor("#F13C6E")),
+                //lineColor(Color.parseColor("#2D74A1")),
+                lineColor(Color.parseColor("#FF4B4C")),
                 lineWidth(4f)
         ));
     }
@@ -274,7 +283,8 @@ public class MarkerFollowingRouteActivity extends AppCompatActivity {
             try {
                 MarkerFollowingRouteActivity activity = weakReference.get();
                 if (activity != null) {
-                    InputStream inputStream = activity.getAssets().open("matched_routessss.geojson");
+                    //InputStream inputStream = activity.getAssets().open("matched_garda.geojson");
+                    InputStream inputStream = activity.getAssets().open("matched_hospital.geojson");
                     return FeatureCollection.fromJson(convertStreamToString(inputStream));
                 }
             } catch (Exception exception) {
