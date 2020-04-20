@@ -1,9 +1,11 @@
 package com.example.minutedublin;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
@@ -17,6 +19,7 @@ import android.widget.Toolbar;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -173,10 +176,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/bus_stops/bus_stops_geo_json");
                         //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
                         style.addImage("bus-geojson",
-                                BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_bus_stop)),
+                                BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_bus_stop2)),
                                 true);
 //                    style.addImage("bus-geojson", BitmapFactory.decodeResource(
-//                            MainActivity.this.getResources(), R.drawable.ic_bus_stop));
+//                            MainActivity.this.getResources(), R.drawable.ic_bus_stop2));
                         GeoJsonSource geoJsonSource = new GeoJsonSource("bus-geojson-source", geoJsonUrl);
                         style.addSource(geoJsonSource);
                         SymbolLayer busSymbolLayer = new SymbolLayer("bus-symbol-layer-id","bus-geojson-source");
