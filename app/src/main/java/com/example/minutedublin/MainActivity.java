@@ -31,6 +31,8 @@ import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
+import com.mapbox.api.geocoding.v5.GeocodingCriteria;
+import com.mapbox.api.geocoding.v5.MapboxGeocoding;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Point;
@@ -107,7 +109,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public Point passpoint;
 
 
-    ////////
+    ////////receive data from sendreport
+    public static double relat;
+    public static double relng;
+    public static int flag;
+
 
 
     @Override
@@ -147,6 +153,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void initView() {
 
+        ////////notification
+        notification = (TextView) this.findViewById(R.id.notification);
+        notification.setSelected(true);
+
         sendreport = (FloatingActionButton) findViewById(R.id.report);
 
         sendreport.setOnClickListener(new View.OnClickListener() {
@@ -154,13 +164,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onClick(View v) {
                 Intent a= new Intent(MainActivity.this,SendReport.class);
                 startActivity(a);
+
+                Intent intent1 = getIntent();
+                if(flag==1)
+                {
+                    StringBuilder textchange = new StringBuilder();
+                    //Point point = Point.fromLngLat(relng, alertlat);
+                    textchange.append("Here reports a disaster event, please pay attention! the location is (").append(relng).
+                            append(",").append("  ").append(relat).append(")");
+                    ////original value is 0.0
+                    notification.setText(textchange);
+                }
+
             }
         });
 
 
-        ////////notification
-        notification = (TextView) this.findViewById(R.id.notification);
-        notification.setSelected(true);
+
+        //notification.setText("here comes a disaster event, the location is: (-6.237489, 53.322813) ");
 
     }
 
@@ -244,6 +265,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         style.addImage("report-geojson", mBitmap);
 
                         GeoJsonSource geoJsonSource = new GeoJsonSource("report-geojson-source", geoJsonUrl);
+                        //geoJsonSource.
                         style.addSource(geoJsonSource);
                         SymbolLayer reportSymbolLayer = new SymbolLayer("report-symbol-layer-id","report-geojson-source");
                         reportSymbolLayer.setProperties(PropertyFactory.iconImage("report-geojson"));
@@ -425,6 +447,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Intent intent =  new Intent(MainActivity.this,SendReport.class);
                 SendReport.alertlat = userPoint.latitude();
                 SendReport.alertlng = userPoint.longitude();
+
+                //relat = userPoint.latitude();
+                //relng = userPoint.longitude();
+
+                /*
+                MapboxGeocoding reverseGeocode = MapboxGeocoding.builder()
+                        .accessToken(getString(R.string.access_token))
+                        .query(Point.fromLngLat(userPoint.longitude(), userPoint.latitude()))
+                        .geocodingTypes(GeocodingCriteria.TYPE_ADDRESS)
+                        .build();
+                intent.putExtra("place", reverseGeocode.toString());
+
+                 */
 
             }
         });

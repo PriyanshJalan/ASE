@@ -16,6 +16,7 @@ public class SendReport extends AppCompatActivity {
     TextView reportlocation;
     public static double alertlat;
     public static double alertlng;
+    //public static place = "";
 
 
     @Override
@@ -27,13 +28,14 @@ public class SendReport extends AppCompatActivity {
 
         /////receive point location
         Intent intent = getIntent();
+        //String string1 =  intent.getStringExtra("place");
         //private Point origin = Point.fromLngLat(orilng, orilat);
 
         StringBuilder reportPoint = new StringBuilder();
         /*
         reportPoint.append("location：(").append("longtitude").
                 append(",").append("latitude").append(")");
-        */
+
 
         MapboxGeocoding reverseGeocode = MapboxGeocoding.builder()
                 .accessToken(Mapbox.getAccessToken() != null ? Mapbox.getAccessToken() :
@@ -41,19 +43,29 @@ public class SendReport extends AppCompatActivity {
                 .query(Point.fromLngLat(alertlng, alertlat))
                 .geocodingTypes(GeocodingCriteria.TYPE_ADDRESS)
                 .build();
+        */
 
-// The result of this reverse geocode will give you "Pennsylvania Ave NW"
+        /////////////////////////
+        Point point = Point.fromLngLat(alertlng, alertlat);
 
+        String Lat = String.format("%.6f", point.latitude());
+        String Lng = String.format("%.6f", point.longitude());
+        reportPoint.append("location：(").append(Lng).
+                append(",").append("  ").append(Lat).append(")");
 
+        /////////////////////////
 
-        reportPoint.append("location：(").append(alertlng).
-                append(",").append(alertlat).append(")");
+        //reportPoint.append("location：(").append(string1).append(")");
+        Intent intent1 =  new Intent(this,MainActivity.class);
+        MainActivity.relat = alertlat;
+        MainActivity.relng = alertlng;
+        MainActivity.flag = 1;
+        //startActivity(intent1);
 
-
-        //reportPoint.append("location：(").append(reverseGeocode).append(")");
 
 
         reportlocation.setText(reportPoint);
 
+        /////
     }
 }
