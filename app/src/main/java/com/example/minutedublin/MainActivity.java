@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -20,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -182,12 +184,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (mapboxMap != null) {
                 Style style = mapboxMap.getStyle();
                 if (style != null) {
+                    /////////////bus stop
                     try {
                         URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/bus_stops/bus_stops_geo_json");
                         //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
-                        style.addImage("bus-geojson",
-                                BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_bus_stop2)),
-                                true);
+                        Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_bus_stop, null);
+                        Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(drawable);
+                        style.addImage("bus-geojson", mBitmap);
 //                    style.addImage("bus-geojson", BitmapFactory.decodeResource(
 //                            MainActivity.this.getResources(), R.drawable.ic_bus_stop2));
                         GeoJsonSource geoJsonSource = new GeoJsonSource("bus-geojson-source", geoJsonUrl);
@@ -200,6 +203,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     } catch (URISyntaxException exception) {
                         Log.d("Error: ", exception.getMessage());
                     }
+
+                    /////////////////train stop
+                    try {
+                        URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/stop/train_geo_json");
+                        //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
+                        style.addImage("train-geojson",
+                                BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_train)),
+                                true);
+                        GeoJsonSource geoJsonSource = new GeoJsonSource("train-geojson-source", geoJsonUrl);
+                        style.addSource(geoJsonSource);
+                        SymbolLayer trainSymbolLayer = new SymbolLayer("train-symbol-layer-id","train-geojson-source");
+                        trainSymbolLayer.setProperties(PropertyFactory.iconImage("train-geojson"));
+                        trainSymbolLayer.withProperties(iconImage("train-geojson"),iconAllowOverlap(true),
+                                iconIgnorePlacement(true));
+                        style.addLayer(trainSymbolLayer);
+                    } catch (URISyntaxException exception) {
+                        Log.d("Error: ", exception.getMessage());
+                    }
+
                 }
             }
             //Loadgeojsonfile();
@@ -209,9 +231,32 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (item.getItemId()==R.id.show_traffic){
             trafficPlugin.setVisibility(!trafficPlugin.isVisible());
         }
-//
-//        if (item.getItemId()==R.id.show_reports){
-//        }
+
+        if (item.getItemId()==R.id.show_reports){
+            if (mapboxMap != null) {
+                Style style = mapboxMap.getStyle();
+                if (style != null) {
+                    try {
+                        URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/report/fetch_reports");
+                        //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
+                        Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_alert, null);
+                        Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(drawable);
+                        style.addImage("report-geojson", mBitmap);
+
+                        GeoJsonSource geoJsonSource = new GeoJsonSource("report-geojson-source", geoJsonUrl);
+                        style.addSource(geoJsonSource);
+                        SymbolLayer reportSymbolLayer = new SymbolLayer("report-symbol-layer-id","report-geojson-source");
+                        reportSymbolLayer.setProperties(PropertyFactory.iconImage("report-geojson"));
+                        reportSymbolLayer.withProperties(iconImage("report-geojson"),iconAllowOverlap(true),
+                                iconIgnorePlacement(true));
+                        style.addLayer(reportSymbolLayer);
+                    } catch (URISyntaxException exception) {
+                        Log.d("Error: ", exception.getMessage());
+                    }
+                }
+            }
+        }
+
         if (item.getItemId()==R.id.show_ways){
             startActivity(new Intent(MainActivity.this, DirectionsProfileActivity.class));
 
@@ -219,7 +264,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (item.getItemId()==R.id.show_rescue){
             startActivity(new Intent(MainActivity.this, MarkerFollowingRouteActivity.class));
-
         }
 
         return super.onOptionsItemSelected(item);
@@ -233,6 +277,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             case R.id.nav_about:
                 break;
             case R.id.nav_dummy1:
+                //Style style = mapboxMap.getStyle();
+                // Create an empty GeoJSON source using the empty feature collection
+                //setUpSource(style);
+                // Set up a new symbol layer for displaying the searched location's feature coordinates
+                //setupLayer(style);
+                //mapView.removeAllViewsInLayout();
+                //onMapReady(mapboxMap);
+                //mapView.removeAllViews();
+                //initView();
+                //mapView.onDestroy();
                 break;
             case R.id.nav_dummy2:
                 break;
@@ -281,6 +335,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         DirectionsProfileActivity.orilng = originPoint.longitude();
         DirectionsProfileActivity.deslat = destinationPoint.latitude();
         DirectionsProfileActivity.deslng = destinationPoint.longitude();
+        //SendReport.alertlat = originPoint.latitude();
+        //SendReport.alertlng = originPoint.longitude();
         //intent.putExtra("orilat", originPoint.latitude());
         //intent.putExtra("orilng", originPoint.longitude());
         //intent.putExtra("deslat", destinationPoint.latitude());
@@ -341,7 +397,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
 
-        this.mapboxMap.setMinZoomPreference(15);
+        this.mapboxMap.setMinZoomPreference(6);
 
         mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
             @Override
@@ -361,6 +417,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mapboxMap.addOnMapClickListener(MainActivity.this);
 
                 ///geojson file read
+                /////send user location
+                //////user’s original location
+                com.mapbox.geojson.Point  userPoint = com.mapbox.geojson.Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
+                        locationComponent.getLastKnownLocation().getLatitude());
+
+                Intent intent =  new Intent(MainActivity.this,SendReport.class);
+                SendReport.alertlat = userPoint.latitude();
+                SendReport.alertlng = userPoint.longitude();
 
             }
         });
@@ -431,6 +495,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     DirectionsProfileActivity.orilng = originPoint.longitude();
                     DirectionsProfileActivity.deslat = destinationPoint.latitude();
                     DirectionsProfileActivity.deslng = destinationPoint.longitude();
+                    //SendReport.alertlat = originPoint.latitude();
+                    //SendReport.alertlng = originPoint.longitude();
 
 
                     GeoJsonSource source = style.getSourceAs(geojsonSourceLayerId);
@@ -448,8 +514,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             new CameraPosition.Builder()
                                     .target(new LatLng(((Point) selectedCarmenFeature.geometry()).latitude(),
                                             ((Point) selectedCarmenFeature.geometry()).longitude()))
-                                    .zoom(20)
-                                    .build()), 4000);
+                                    .zoom(14)
+                                    .build()), 1);
 
 
 //                    com.mapbox.geojson.Point  destinationPoint = com.mapbox.geojson.Point.fromLngLat(((Point) selectedCarmenFeature.geometry()).longitude(), ((Point) selectedCarmenFeature.geometry()).latitude());

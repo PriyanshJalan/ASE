@@ -149,24 +149,6 @@ public class DirectionsProfileActivity extends AppCompatActivity
                                         .build()), 1);
 
                         ///load bus stop
-                        /*
-                        try {
-                            URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/stop/train_geo_json");
-                            //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
-                            style.addImage("train-geojson",
-                                    BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_train)),
-                                    true);
-                            GeoJsonSource geoJsonSource = new GeoJsonSource("train-geojson-source", geoJsonUrl);
-                            style.addSource(geoJsonSource);
-                            SymbolLayer busSymbolLayer = new SymbolLayer("train-symbol-layer-id","train-geojson-source");
-                            busSymbolLayer.setProperties(PropertyFactory.iconImage("train-geojson"));
-                            busSymbolLayer.withProperties(iconImage("train-geojson"),iconAllowOverlap(true),
-                                    iconIgnorePlacement(true));
-                            style.addLayer(busSymbolLayer);
-                        } catch (URISyntaxException exception) {
-                            Log.d("Error: ", exception.getMessage());
-                        }
-*/
 
                     }
                 });
