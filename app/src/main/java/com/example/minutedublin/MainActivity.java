@@ -40,6 +40,7 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private NavigationView navigationView;
     private MenuItem p2penter;
     private FloatingActionButton sendreport;
-
+    private TrafficPlugin trafficPlugin;
     /////notification
     private TextView notification;
 
@@ -205,8 +206,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             //startActivity(new Intent(MainActivity.this, TransActivity.class));
         }
 
-//        if (item.getItemId()==R.id.show_traffic){
-//        }
+        if (item.getItemId()==R.id.show_traffic){
+            trafficPlugin.setVisibility(true);
+        }
 //
 //        if (item.getItemId()==R.id.show_reports){
 //        }
@@ -339,11 +341,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
 
-        this.mapboxMap.setMinZoomPreference(13);
+        this.mapboxMap.setMinZoomPreference(15);
 
-        mapboxMap.setStyle(getString(R.string.navigation_guidance_day), new Style.OnStyleLoaded() {
+        mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
+                trafficPlugin = new TrafficPlugin(mapView, mapboxMap, style);
                 //////search box
                 initSearchFab();
                 style.addImage(symbolIconId, BitmapFactory.decodeResource(
