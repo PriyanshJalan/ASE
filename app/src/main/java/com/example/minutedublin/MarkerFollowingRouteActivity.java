@@ -30,6 +30,7 @@ import com.mapbox.mapboxsdk.utils.BitmapUtils;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 import timber.log.Timber;
@@ -140,10 +141,10 @@ public class MarkerFollowingRouteActivity extends AppCompatActivity {
                     }
                     markerIconAnimator = ObjectAnimator
                             .ofObject(latLngEvaluator, count == 0 || markerIconCurrentLocation == null
-                                            ? new LatLng(53.36614916861485, -6.2398481369018555)
+                                            ? new LatLng(53.35372769822772, -6.2450408935546875)
                                             : markerIconCurrentLocation,
                                     new LatLng(nextLocation.latitude(), nextLocation.longitude()))
-                            .setDuration(10000);
+                            .setDuration(50000);
                     markerIconAnimator.setInterpolator(new LinearInterpolator());
 
                     markerIconAnimator.addUpdateListener(animatorUpdateListener);
@@ -154,7 +155,7 @@ public class MarkerFollowingRouteActivity extends AppCompatActivity {
 
                     // Once we finish we need to repeat the entire process by executing the
                     // handler again once the ValueAnimator is finished.
-                    handler.postDelayed(this, 300);
+                    handler.postDelayed(this, 6000);
                 }
             }
         };
@@ -189,8 +190,8 @@ public class MarkerFollowingRouteActivity extends AppCompatActivity {
      * Add the marker icon SymbolLayer.
      */
     private void initSymbolLayer(@NonNull Style loadedMapStyle) {
-        loadedMapStyle.addImage("moving-pink-dot", BitmapUtils.getBitmapFromDrawable(
-                getResources().getDrawable(R.drawable.ic_ambulance)));
+        loadedMapStyle.addImage("moving-pink-dot", Objects.requireNonNull(BitmapUtils.getBitmapFromDrawable(
+                getResources().getDrawable(R.drawable.ic_ambulance))));
 
         loadedMapStyle.addLayer(new SymbolLayer("symbol-layer-id", DOT_SOURCE_ID).withProperties(
                 iconImage("moving-pink-dot"),
@@ -284,7 +285,7 @@ public class MarkerFollowingRouteActivity extends AppCompatActivity {
                 MarkerFollowingRouteActivity activity = weakReference.get();
                 if (activity != null) {
                     //InputStream inputStream = activity.getAssets().open("matched_garda.geojson");
-                    InputStream inputStream = activity.getAssets().open("matched_hospital.geojson");
+                    InputStream inputStream = activity.getAssets().open("matched_test.geojson");
                     return FeatureCollection.fromJson(convertStreamToString(inputStream));
                 }
             } catch (Exception exception) {

@@ -146,7 +146,7 @@ public class DirectionsProfileActivity extends AppCompatActivity
                                         .target(new LatLng(((Point) origin).latitude(),
                                                 ((Point) origin).longitude()))
                                         .zoom(14)
-                                        .build()), 4000);
+                                        .build()), 1);
 
                         ///load bus stop
                         /*
