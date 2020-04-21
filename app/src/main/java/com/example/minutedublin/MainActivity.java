@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         if (item.getItemId()==R.id.show_traffic){
-            trafficPlugin.setVisibility(true);
+            trafficPlugin.setVisibility(!trafficPlugin.isVisible());
         }
 //
 //        if (item.getItemId()==R.id.show_reports){
