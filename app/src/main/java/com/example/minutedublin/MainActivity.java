@@ -1,5 +1,6 @@
 package com.example.minutedublin;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -21,6 +22,7 @@ import android.widget.Toolbar;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -170,6 +172,12 @@ public class MainActivity extends AppCompatActivity implements
         sendreport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*
+                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.INTERNET)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.INTERNET}, 1);
+                }
+                 */
                 Intent a= new Intent(MainActivity.this,SendReport.class);
                 startActivity(a);
                 Intent intent1 = getIntent();
