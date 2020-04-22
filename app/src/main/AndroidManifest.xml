@@ -34,6 +34,8 @@
         </activity>
         <activity android:name=".DirectionsProfileActivity" />
         <activity android:name=".MarkerFollowingRouteActivity" />
+        <activity android:name=".MovingIconWithTrailingLineActivity" />
+        <activity android:name=".AboutUs" />
     </application>
 
 </manifest>
