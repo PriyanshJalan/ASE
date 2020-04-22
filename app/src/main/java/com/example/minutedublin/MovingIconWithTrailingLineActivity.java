@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.animation.LinearInterpolator;
 import android.widget.Toast;
 
@@ -34,10 +35,13 @@ import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.layers.Property;
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -79,6 +83,7 @@ public class MovingIconWithTrailingLineActivity extends AppCompatActivity {
   //private Point destinationPoint = Point.fromLngLat(-6.294994354248047, 53.34850191547604);
   private Animator currentAnimator;
 
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -106,6 +111,61 @@ public class MovingIconWithTrailingLineActivity extends AppCompatActivity {
                     Point.fromLngLat(-6.2409210205078125, 53.342763063131976),
                     Point.fromLngLat(-6.307868957519531, 53.33948337211111)
             );
+
+            ///////show healthcenter
+            try {
+              URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/emergency_center/fetch_healthcare");
+              //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
+              Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_hospital, null);
+              Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(drawable);
+              style.addImage("health-geojson", mBitmap);
+              GeoJsonSource geoJsonSource = new GeoJsonSource("health-geojson-source", geoJsonUrl);
+              style.addSource(geoJsonSource);
+              SymbolLayer healthSymbolLayer = new SymbolLayer("health-symbol-layer-id","health-geojson-source");
+              healthSymbolLayer.setProperties(PropertyFactory.iconImage("health-geojson"));
+              healthSymbolLayer.withProperties(iconImage("health-geojson"),iconAllowOverlap(true),
+                      iconIgnorePlacement(true));
+              style.addLayer(healthSymbolLayer);
+            } catch (URISyntaxException exception) {
+              Log.d("Error: ", exception.getMessage());
+            }
+
+            ///////fire station
+            try {
+              URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/emergency_center/fetch_fire_brigade");
+
+              Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_firestation, null);
+              Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(drawable);
+              style.addImage("fire-geojson", mBitmap);
+              GeoJsonSource geoJsonSource = new GeoJsonSource("fire-geojson-source", geoJsonUrl);
+              style.addSource(geoJsonSource);
+              SymbolLayer fireSymbolLayer = new SymbolLayer("fire-symbol-layer-id","fire-geojson-source");
+              fireSymbolLayer.setProperties(PropertyFactory.iconImage("fire-geojson"));
+              fireSymbolLayer.withProperties(iconImage("fire-geojson"),iconAllowOverlap(true),
+                      iconIgnorePlacement(true));
+              style.addLayer(fireSymbolLayer);
+            } catch (URISyntaxException exception) {
+              Log.d("Error: ", exception.getMessage());
+            }
+
+            ///////show garda
+            try {
+              URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/emergency_center/fetch_garda");
+
+              Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_garda, null);
+              Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(drawable);
+              style.addImage("garda-geojson", mBitmap);
+              GeoJsonSource geoJsonSource = new GeoJsonSource("garda-geojson-source", geoJsonUrl);
+              style.addSource(geoJsonSource);
+              SymbolLayer gardaSymbolLayer = new SymbolLayer("garda-symbol-layer-id","garda-geojson-source");
+              gardaSymbolLayer.setProperties(PropertyFactory.iconImage("garda-geojson"));
+              gardaSymbolLayer.withProperties(iconImage("garda-geojson"),iconAllowOverlap(true),
+                      iconIgnorePlacement(true));
+              style.addLayer(gardaSymbolLayer);
+            } catch (URISyntaxException exception) {
+              Log.d("Error: ", exception.getMessage());
+            }
+
           }
         });
       }

@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
@@ -59,6 +60,8 @@ import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
 
+import static com.mapbox.mapboxsdk.style.layers.Property.NONE;
+import static com.mapbox.mapboxsdk.style.layers.Property.VISIBLE;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
 import android.app.Activity;
@@ -80,6 +83,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacem
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 
 import static com.mapbox.geojson.Point.fromLngLat;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility;
 
 public class MainActivity extends AppCompatActivity implements
         OnMapReadyCallback, MapboxMap.OnMapClickListener, PermissionsListener {
@@ -111,6 +115,19 @@ public class MainActivity extends AppCompatActivity implements
     public static double relat;
     public static double relng;
     public static int flag;
+
+
+    //////for show or disshow the marker
+    private int trans = 0;
+    private int trans1 = 0;
+    private int trans2 = 0;
+    private ImageView clearview;
+
+
+    /////symblelayer
+    SymbolLayer busSymbolLayer;
+    SymbolLayer trainSymbolLayer;
+    SymbolLayer reportSymbolLayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,6 +183,27 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
         });
+
+        ////clear button
+        clearview = (ImageView) findViewById(R.id.clear);
+        clearview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(trans==1)
+                {
+                    busSymbolLayer.setProperties(visibility(NONE));
+                }
+                if(trans1==1)
+                {
+                    trainSymbolLayer.setProperties(visibility(NONE));
+                }
+                if(trans2==1)
+                {
+                    reportSymbolLayer.setProperties(visibility(NONE));
+                }
+            }
+        });
+
         //notification.setText("here comes a disaster event, the location is: (-6.237489, 53.322813) ");
     }
 
@@ -187,41 +225,52 @@ public class MainActivity extends AppCompatActivity implements
                 if (style != null) {
                     /////////////bus stop
                     try {
-                        URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/bus_stops/bus_stops_geo_json");
-                        //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
-                        Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_bus_stop, null);
-                        Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(drawable);
-                        style.addImage("bus-geojson", mBitmap);
+                        if(trans == 0)
+                        {
+                            URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/bus_stops/bus_stops_geo_json");
+                            //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
+                            Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_bus_stop, null);
+                            Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(drawable);
+                            style.addImage("bus-geojson", mBitmap);
 //                    style.addImage("bus-geojson", BitmapFactory.decodeResource(
 //                            MainActivity.this.getResources(), R.drawable.ic_bus_stop2));
-                        GeoJsonSource geoJsonSource = new GeoJsonSource("bus-geojson-source", geoJsonUrl);
-                        style.addSource(geoJsonSource);
-                        SymbolLayer busSymbolLayer = new SymbolLayer("bus-symbol-layer-id","bus-geojson-source");
-                        busSymbolLayer.setProperties(PropertyFactory.iconImage("bus-geojson"));
-                        busSymbolLayer.withProperties(iconImage("bus-geojson"),iconAllowOverlap(true),
-                                iconIgnorePlacement(true));
-                        style.addLayer(busSymbolLayer);
+                            GeoJsonSource geoJsonSource = new GeoJsonSource("bus-geojson-source", geoJsonUrl);
+                            style.addSource(geoJsonSource);
+                            busSymbolLayer = new SymbolLayer("bus-symbol-layer-id","bus-geojson-source");
+                            busSymbolLayer.setProperties(PropertyFactory.iconImage("bus-geojson"));
+                            busSymbolLayer.withProperties(iconImage("bus-geojson"),iconAllowOverlap(true),
+                                    iconIgnorePlacement(true));
+                            style.addLayer(busSymbolLayer);
+                            trans=1;
+                        }
+                        busSymbolLayer.setProperties(visibility(VISIBLE));
                     } catch (URISyntaxException exception) {
                         Log.d("Error: ", exception.getMessage());
                     }
 
                     /////////////////train stop
+
                     try {
-                        URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/stop/train_geo_json");
-                        //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
-                        style.addImage("train-geojson",
-                                BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_train)),
-                                true);
-                        GeoJsonSource geoJsonSource = new GeoJsonSource("train-geojson-source", geoJsonUrl);
-                        style.addSource(geoJsonSource);
-                        SymbolLayer trainSymbolLayer = new SymbolLayer("train-symbol-layer-id","train-geojson-source");
-                        trainSymbolLayer.setProperties(PropertyFactory.iconImage("train-geojson"));
-                        trainSymbolLayer.withProperties(iconImage("train-geojson"),iconAllowOverlap(true),
-                                iconIgnorePlacement(true));
-                        style.addLayer(trainSymbolLayer);
+                        if(trans1 == 0) {
+                            URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/stop/train_geo_json");
+                            //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
+                            style.addImage("train-geojson",
+                                    BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_train)),
+                                    true);
+                            GeoJsonSource geoJsonSource = new GeoJsonSource("train-geojson-source", geoJsonUrl);
+                            style.addSource(geoJsonSource);
+                            trainSymbolLayer = new SymbolLayer("train-symbol-layer-id", "train-geojson-source");
+                            trainSymbolLayer.setProperties(PropertyFactory.iconImage("train-geojson"));
+                            trainSymbolLayer.withProperties(iconImage("train-geojson"), iconAllowOverlap(true),
+                                    iconIgnorePlacement(true));
+                            style.addLayer(trainSymbolLayer);
+                            trans1=1;
+                        }
+                        trainSymbolLayer.setProperties(visibility(VISIBLE));
                     } catch (URISyntaxException exception) {
                         Log.d("Error: ", exception.getMessage());
                     }
+
 
                 }
             }
@@ -236,20 +285,25 @@ public class MainActivity extends AppCompatActivity implements
                 Style style = mapboxMap.getStyle();
                 if (style != null) {
                     try {
-                        URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/report/fetch_reports");
-                        //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
-                        Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_alert, null);
-                        Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(drawable);
-                        style.addImage("report-geojson", mBitmap);
+                        if(trans2 == 0)
+                        {
+                            URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/report/fetch_reports");
+                            //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
+                            Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_alert, null);
+                            Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(drawable);
+                            style.addImage("report-geojson", mBitmap);
 
-                        GeoJsonSource geoJsonSource = new GeoJsonSource("report-geojson-source", geoJsonUrl);
-                        //geoJsonSource.
-                        style.addSource(geoJsonSource);
-                        SymbolLayer reportSymbolLayer = new SymbolLayer("report-symbol-layer-id","report-geojson-source");
-                        reportSymbolLayer.setProperties(PropertyFactory.iconImage("report-geojson"));
-                        reportSymbolLayer.withProperties(iconImage("report-geojson"),iconAllowOverlap(true),
-                                iconIgnorePlacement(true));
-                        style.addLayer(reportSymbolLayer);
+                            GeoJsonSource geoJsonSource = new GeoJsonSource("report-geojson-source", geoJsonUrl);
+                            //geoJsonSource.
+                            style.addSource(geoJsonSource);
+                            reportSymbolLayer = new SymbolLayer("report-symbol-layer-id","report-geojson-source");
+                            reportSymbolLayer.setProperties(PropertyFactory.iconImage("report-geojson"));
+                            reportSymbolLayer.withProperties(iconImage("report-geojson"),iconAllowOverlap(true),
+                                    iconIgnorePlacement(true));
+                            style.addLayer(reportSymbolLayer);
+                            trans2=1;
+                        }
+                        reportSymbolLayer.setProperties(visibility(VISIBLE));
                     } catch (URISyntaxException exception) {
                         Log.d("Error: ", exception.getMessage());
                     }

@@ -1,7 +1,9 @@
 package com.example.minutedublin;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -37,6 +39,8 @@ import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -148,7 +152,26 @@ public class DirectionsProfileActivity extends AppCompatActivity
                                         .zoom(14)
                                         .build()), 1);
 
-                        ///load bus stop
+                        ///load report here
+                        try {
+                            URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/report/fetch_reports");
+                            //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
+                            Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_precaution, null);
+                            Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(drawable);
+                            style.addImage("showreport-geojson", mBitmap);
+
+                            GeoJsonSource geoJsonSource = new GeoJsonSource("showreport-geojson-source", geoJsonUrl);
+                            //geoJsonSource.
+                            style.addSource(geoJsonSource);
+                            SymbolLayer showreportSymbolLayer = new SymbolLayer("showreport-symbol-layer-id","showreport-geojson-source");
+                            showreportSymbolLayer.setProperties(PropertyFactory.iconImage("showreport-geojson"));
+                            showreportSymbolLayer.withProperties(iconImage("showreport-geojson"),iconAllowOverlap(true),
+                                    iconIgnorePlacement(true));
+                            style.addLayer(showreportSymbolLayer);
+                        } catch (URISyntaxException exception) {
+                            Log.d("Error: ", exception.getMessage());
+                        }
+
 
                     }
                 });
