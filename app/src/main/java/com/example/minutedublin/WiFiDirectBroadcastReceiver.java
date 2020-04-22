@@ -1,5 +1,6 @@
 package com.example.minutedublin;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -53,9 +54,18 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         //indicates available peer list change
         else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
             Log.d(TAG, "onReceive::WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION");
+//            if (mManager != null)
+//            {
+//                mManager.requestPeers(mChannel,mActivity.peerListListener);
+//            }
+
             if (mManager != null)
             {
-                mManager.requestPeers(mChannel,mActivity.peerListListener);
+                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        || ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    mManager.requestPeers(mChannel,mActivity.peerListListener);
+                }
+
             }
 
 
