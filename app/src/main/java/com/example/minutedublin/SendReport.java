@@ -120,7 +120,7 @@ public class SendReport extends AppCompatActivity {
                 httpURLConnection.connect();
 
                 DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
-
+                wr.writeBytes(params[1]);
                 wr.flush();
                 wr.close();
 
@@ -129,7 +129,7 @@ public class SendReport extends AppCompatActivity {
                 InputStreamReader inputStreamReader = new InputStreamReader(in);
 
                 int inputStreamData = inputStreamReader.read();
-                while (inputStreamData != -1) {  wr.writeBytes(params[1]);
+                while (inputStreamData != -1) {
                     char current = (char) inputStreamData;
                     inputStreamData = inputStreamReader.read();
                     data += current;
