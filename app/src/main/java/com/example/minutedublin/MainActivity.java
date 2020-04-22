@@ -274,19 +274,7 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.nav_about:
                 startActivity(new Intent(MainActivity.this, AboutUs.class));
                 break;
-            case R.id.nav_dummy1:
-                //Style style = mapboxMap.getStyle();
-                // Create an empty GeoJSON source using the empty feature collection
-                //setUpSource(style);
-                // Set up a new symbol layer for displaying the searched location's feature coordinates
-                //setupLayer(style);
-                //mapView.removeAllViewsInLayout();
-                //onMapReady(mapboxMap);
-                //mapView.removeAllViews();
-                //initView();
-                //mapView.onDestroy();
-                break;
-            case R.id.nav_dummy2:
+            case R.id.nav_setting:
                 break;
         }
     }

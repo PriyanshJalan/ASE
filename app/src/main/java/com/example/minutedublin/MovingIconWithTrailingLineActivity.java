@@ -4,14 +4,17 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.animation.LinearInterpolator;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.mapbox.api.directions.v5.DirectionsCriteria;
 import com.mapbox.api.directions.v5.MapboxDirections;
@@ -33,9 +36,11 @@ import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.layers.Property;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -92,7 +97,7 @@ public class MovingIconWithTrailingLineActivity extends AppCompatActivity {
       @Override
       public void onMapReady(MapboxMap mapboxMap) {
         MovingIconWithTrailingLineActivity.this.mapboxMap = mapboxMap;
-        mapboxMap.setStyle(Style.LIGHT, new Style.OnStyleLoaded() {
+        mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
           @Override
           public void onStyleLoaded(@NonNull Style style) {
             // Use the Mapbox Directions API to get a directions route
@@ -244,8 +249,8 @@ public class MovingIconWithTrailingLineActivity extends AppCompatActivity {
    * Add the marker icon SymbolLayer.
    */
   private void initSymbolLayer(@NonNull Style loadedMapStyle) {
-    loadedMapStyle.addImage("moving-red-marker", BitmapFactory.decodeResource(
-        getResources(), R.drawable.pink_dot));
+    loadedMapStyle.addImage("moving-red-marker", Objects.requireNonNull(BitmapUtils.getBitmapFromDrawable(
+            getResources().getDrawable(R.drawable.ic_ambulance))));
     loadedMapStyle.addLayer(new SymbolLayer("symbol-layer-id", DOT_SOURCE_ID).withProperties(
         iconImage("moving-red-marker"),
         iconSize(1f),

@@ -2,20 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/p2penter"
-          android:icon="@drawable/ic_peer_to_peer"
-          android:title="Connections" />
+        android:icon="@drawable/ic_peer_to_peer"
+        android:title="Connections" />
+
+    <item android:id="@+id/nav_setting"
+        android:icon="@drawable/ic_gear"
+        android:title="Setting" />
 
     <item android:id="@+id/nav_about"
         android:icon="@drawable/ic_about"
         android:title="About" />
-
-    <item android:id="@+id/nav_dummy1"
-        android:icon="@drawable/ic_about"
-        android:title="Dummy1" />
-
-    <item android:id="@+id/nav_dummy2"
-        android:icon="@drawable/ic_about"
-        android:title="Dummy2" />
 
 
 </menu>
