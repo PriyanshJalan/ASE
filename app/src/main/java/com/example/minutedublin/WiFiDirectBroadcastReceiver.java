@@ -25,6 +25,11 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private Wifip2p mActivity;
     public static final String TAG = "NGVL";
 
+    // default constructor
+    public WiFiDirectBroadcastReceiver() {
+
+    }
+
     public WiFiDirectBroadcastReceiver(WifiP2pManager mManager, WifiP2pManager.Channel mChannel, Wifip2p mActivity) {
         this.mManager = mManager;
         this.mChannel = mChannel;

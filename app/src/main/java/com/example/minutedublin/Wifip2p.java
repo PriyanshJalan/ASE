@@ -1,9 +1,11 @@
 package com.example.minutedublin;
 
+import android.Manifest;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -27,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -128,19 +131,25 @@ public class Wifip2p extends AppCompatActivity {
         btnDiscover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
-                    @Override
-                    public void onSuccess() {
-                        ConnectionStatus.setText("Discovery Started");
-                        ConnectionStatus.startAnimation(fromtop);
-                    }
+                if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        || ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
+                        @Override
+                        public void onSuccess() {
+                            ConnectionStatus.setText("Discovery Started");
+                            ConnectionStatus.startAnimation(fromtop);
+                        }
 
-                    @Override
-                    public void onFailure(int i) {
-                        ConnectionStatus.setText("Discovery Starting Failed");
-                        ConnectionStatus.startAnimation(fromtop);
-                    }
-                });
+                        @Override
+                        public void onFailure(int i) {
+                            ConnectionStatus.setText("Discovery Starting Failed");
+                            ConnectionStatus.startAnimation(fromtop);
+                        }
+                    });
+                }
+                else{
+                    Toast.makeText(activity, "This app needs location permissions in order to show its functionality", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -151,18 +160,23 @@ public class Wifip2p extends AppCompatActivity {
                 final WifiP2pDevice device = deviceArray[i];
                 WifiP2pConfig config = new WifiP2pConfig();
                 config.deviceAddress = device.deviceAddress;
+                if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        || ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
+                        @Override
+                        public void onSuccess() {
+                            Toast.makeText(getApplicationContext(), "Connected To" + device.deviceName, Toast.LENGTH_SHORT).show();
+                        }
 
-                mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
-                    @Override
-                    public void onSuccess() {
-                        Toast.makeText(getApplicationContext(), "Connected To" + device.deviceName, Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onFailure(int reason) {
-                        Toast.makeText(getApplicationContext(), "Not Connected", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                        @Override
+                        public void onFailure(int reason) {
+                            Toast.makeText(getApplicationContext(), "Not Connected", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                else{
+                    Toast.makeText(activity, "This app needs location permissions in order to show its functionality", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
