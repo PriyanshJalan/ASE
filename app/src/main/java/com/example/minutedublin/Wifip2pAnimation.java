@@ -78,7 +78,7 @@ public class Wifip2pAnimation extends AppCompatActivity {
 
                 btnpagephoto.animate().scaleY(0.7f).scaleX(0.7f).setDuration(350).start();
                 btnpagechat.animate().scaleY(1).scaleX(1).setDuration(350).start();
-                dotmenu.animate().translationX(430).setDuration(350).setStartDelay(100).start();
+                dotmenu.animate().translationX(120).setDuration(350).setStartDelay(100).start();
 
             }
         });

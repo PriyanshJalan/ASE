@@ -8,12 +8,12 @@
     tools:context=".SendReport">
 
 
-
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="260dp"
-        android:background="@drawable/bgheader"
+        android:background="@drawable/bg3"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

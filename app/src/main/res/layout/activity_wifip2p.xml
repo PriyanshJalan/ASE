@@ -38,7 +38,7 @@
         android:layout_marginStart="0dp"
         android:layout_marginLeft="0dp"
         android:layout_marginTop="25dp"
-        android:background="#E89F9F" />
+        android:background="@drawable/bg3" />
 
     <!--        android:layout_marginStart="166dp"
         android:layout_marginLeft="166dp"-->
@@ -95,7 +95,7 @@
         android:fontFamily="@font/mregular"
         android:text="Connection Status"
         android:textAlignment="center"
-        android:textColor="#E89F9F"
+        android:textColor="#890E0E"
         android:textSize="18sp"
         android:textStyle="bold" />
     <!--        android:layout_marginStart="-165dp"-->

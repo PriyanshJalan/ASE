@@ -46,7 +46,7 @@ public class SendReport extends AppCompatActivity {
     TextView reportlocation;
     public static double alertlat;
     public static double alertlng;
-    public String type1;
+    public String type1="accident";
     //public static place = "";
 
     private Button send;
@@ -119,12 +119,12 @@ public class SendReport extends AppCompatActivity {
 
                 JSONObject postData = new JSONObject();
                 try {
-                   postData.put("type", "fire");
- //                   postData.put("type",  type1);
+                   //postData.put("type", "fire");
+                    postData.put("type",  type1);
 //                    postData.put("report_time", "20/02/2020 08:43:38");
                     postData.put("report_time", date);
 //                    postData.put("comment", "xxxxxx");
-                    //                    postData.put("longitude", "-6.2609");
+//                    postData.put("longitude", "-6.2609");
 //                    postData.put("latitude","53.3497");
                     postData.put("comment", detail.getText());
                     postData.put("longitude", Lng);
