@@ -32,6 +32,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.gson.JsonObject;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.api.directions.v5.DirectionsCriteria;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.api.geocoding.v5.GeocodingCriteria;
@@ -197,16 +198,16 @@ public class MainActivity extends AppCompatActivity implements
         clearview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(trans==1)
-                {
+                if(trafficPlugin.isVisible()) {
+                    trafficPlugin.setVisibility(false);
+                }
+                if(trans==1) {
                     busSymbolLayer.setProperties(visibility(NONE));
                 }
-                if(trans1==1)
-                {
+                if(trans1==1) {
                     trainSymbolLayer.setProperties(visibility(NONE));
                 }
-                if(trans2==1)
-                {
+                if(trans2==1) {
                     reportSymbolLayer.setProperties(visibility(NONE));
                 }
             }
@@ -286,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements
             //startActivity(new Intent(MainActivity.this, TransActivity.class));
         }
         if (item.getItemId()==R.id.show_traffic){
-            trafficPlugin.setVisibility(!trafficPlugin.isVisible());
+            trafficPlugin.setVisibility(true);
         }
         if (item.getItemId()==R.id.show_reports){
             if (mapboxMap != null) {
@@ -320,7 +321,7 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         if (item.getItemId()==R.id.show_ways){
-            startActivity(new Intent(MainActivity.this, DirectionsProfileActivity.class));
+            startActivity(new Intent(MainActivity.this, Evacuate.class));
         }
         if (item.getItemId()==R.id.show_rescue){
             startActivity(new Intent(MainActivity.this, MovingIconWithTrailingLineActivity.class));
@@ -404,6 +405,7 @@ public class MainActivity extends AppCompatActivity implements
                 .accessToken(Mapbox.getAccessToken())
                 .origin(originPoint)
                 .destination(destinationPoint)
+                .profile(DirectionsCriteria.PROFILE_DRIVING_TRAFFIC)
                 .build()
                 .getRoute(new Callback<DirectionsResponse>() {
                     @Override

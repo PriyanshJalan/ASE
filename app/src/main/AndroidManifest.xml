@@ -36,6 +36,7 @@
         <activity android:name=".MarkerFollowingRouteActivity" />
         <activity android:name=".MovingIconWithTrailingLineActivity" />
         <activity android:name=".AboutUs" />
+        <activity android:name=".Evacuate" />
     </application>
 
 </manifest>

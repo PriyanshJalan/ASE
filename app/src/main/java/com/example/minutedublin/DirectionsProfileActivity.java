@@ -123,35 +123,25 @@ public class DirectionsProfileActivity extends AppCompatActivity
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
-                mapboxMap.setStyle(getString(R.string.navigation_guidance_day), new Style.OnStyleLoaded() {
+                mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
-
                         DirectionsProfileActivity.this.mapboxMap = mapboxMap;
-
                         initSource(style);
-
                         initLayers(style);
-
                         getAllRoutes(false);
-
                         initButtonClickListeners();
-
                         mapboxMap.addOnMapClickListener(DirectionsProfileActivity.this);
-
                         Toast.makeText(DirectionsProfileActivity.this,
                                 R.string.instruction, Toast.LENGTH_SHORT).show();
-
                         //final LatLng markerLocation = origin;
                         //markerLocation.setLatitude(origin.latitude());
-
                         mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(
                                 new CameraPosition.Builder()
                                         .target(new LatLng(((Point) origin).latitude(),
                                                 ((Point) origin).longitude()))
-                                        .zoom(14)
-                                        .build()), 1);
-
+                                        .zoom(16)
+                                        .build()), 10);
                         ///load report here
                         try {
                             URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/report/fetch_reports");
@@ -159,7 +149,6 @@ public class DirectionsProfileActivity extends AppCompatActivity
                             Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_precaution, null);
                             Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(drawable);
                             style.addImage("showreport-geojson", mBitmap);
-
                             GeoJsonSource geoJsonSource = new GeoJsonSource("showreport-geojson-source", geoJsonUrl);
                             //geoJsonSource.
                             style.addSource(geoJsonSource);
@@ -171,8 +160,6 @@ public class DirectionsProfileActivity extends AppCompatActivity
                         } catch (URISyntaxException exception) {
                             Log.d("Error: ", exception.getMessage());
                         }
-
-
                     }
                 });
             }

@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/show_traffic"
-        android:title="Show/Hide Traffic" />
+        android:title="Show Traffic" />
     <item
         android:id="@+id/show_transportation"
         android:title="Show Transportation" />
