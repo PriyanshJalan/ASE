@@ -147,6 +147,8 @@ public class SendReport extends AppCompatActivity {
                 MainActivity.relat = alertlat;
                 MainActivity.relng = alertlng;
                 MainActivity.flag = 1;
+                re.putExtra("type", type1);
+                re.putExtra("comment",detail.getText().toString());
                 startActivity(re);
             }
 

@@ -120,6 +120,8 @@ public class MainActivity extends AppCompatActivity implements
     public static int flag;
 
 
+    private com.mapbox.geojson.Point  userPoint;
+
     //////for show or disshow the marker
     private int trans = 0;
     private int trans1 = 0;
@@ -163,6 +165,8 @@ public class MainActivity extends AppCompatActivity implements
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
+
+
     }
 
     private void initView() {
@@ -179,17 +183,14 @@ public class MainActivity extends AppCompatActivity implements
                     ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.INTERNET}, 1);
                 }
                  */
+                userPoint = com.mapbox.geojson.Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
+                        locationComponent.getLastKnownLocation().getLatitude());
+                Intent intent =  new Intent(MainActivity.this,SendReport.class);
+                SendReport.alertlat = userPoint.latitude();
+                SendReport.alertlng = userPoint.longitude();
+
                 Intent a= new Intent(MainActivity.this,SendReport.class);
                 startActivity(a);
-                Intent re = getIntent();
-                if(flag==1) {
-                    StringBuilder textchange = new StringBuilder();
-                    //Point point = Point.fromLngLat(relng, alertlat);
-                    textchange.append("Here reports a disaster event, please pay attention! the location is (").append(relng).
-                            append(",").append("  ").append(relat).append(")");
-                    ////original value is 0.0
-                    notification.setText(textchange);
-                }
             }
         });
 
@@ -451,14 +452,12 @@ public class MainActivity extends AppCompatActivity implements
                 locationComponent.setRenderMode(RenderMode.COMPASS);
                 addDestinationIconLayer(style);
                 mapboxMap.addOnMapClickListener(MainActivity.this);
+
+
                 ///geojson file read
                 /////send user location
                 //////user’s original location
-                com.mapbox.geojson.Point  userPoint = com.mapbox.geojson.Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
-                        locationComponent.getLastKnownLocation().getLatitude());
-                Intent intent =  new Intent(MainActivity.this,SendReport.class);
-                SendReport.alertlat = userPoint.latitude();
-                SendReport.alertlng = userPoint.longitude();
+
                 //relat = userPoint.latitude();
                 //relng = userPoint.longitude();
                 /*
@@ -469,6 +468,18 @@ public class MainActivity extends AppCompatActivity implements
                         .build();
                 intent.putExtra("place", reverseGeocode.toString());
                  */
+                Intent re = getIntent();
+                if(flag==1) {
+                    StringBuilder textchange = new StringBuilder();
+                    String typeis = re.getStringExtra("type");
+                    String commentis = re.getStringExtra("comment");
+                    //Point point = Point.fromLngLat(relng, alertlat);
+                    textchange.append("Here reports an event, please pay attention! the location is (").append(relng).
+                            append(",").append("  ").append(relat).append(")").append(", the event type is ").append(typeis)
+                    .append(", the comment of this event is: ").append(commentis);
+                    ////original value is 0.0
+                    notification.setText(textchange);
+                }
             }
         });
 
