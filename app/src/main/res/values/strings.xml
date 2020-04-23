@@ -4,8 +4,8 @@
     <string name="drawer_close">Drawer Close</string>
     <string name="access_token">sk.eyJ1IjoidG93ZXJtYWx0YSIsImEiOiJjazZreHNsODYwOHF6M2xucGlubzd3bzl0In0.ZA2ILAXrTZSF8dskXwK6aQ</string>
     <string name="navigation_guidance_day" translatable="false">mapbox://styles/mapbox/navigation-guidance-day-v4</string>
-    <string name="driving_profile">%1$sm\nby car</string>
-    <string name="walking_profile">%1$sm\non foot</string>
-    <string name="cycling_profile">%1$sm\nby bike</string>
+    <string name="driving_profile">%1$smins\nRoute One</string>
+    <string name="walking_profile">%1$smins\nRoute Two</string>
+    <string name="cycling_profile">%1$smins\nRoute Three</string>
     <string name="instruction">Click on map or buttons to change route</string>
 </resources>
