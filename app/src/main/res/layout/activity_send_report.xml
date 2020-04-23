@@ -105,6 +105,7 @@
                     tools:layout_editor_absoluteY="180dp" />
 
                 <TextView
+                    android:id="@+id/accidenttext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/mmedium"
@@ -132,12 +133,14 @@
                     tools:layout_editor_absoluteY="180dp" />
 
                 <TextView
+                    android:id="@+id/crimetext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/mmedium"
                     android:text="Crime"
                     android:textColor="#172646"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    />
 
             </LinearLayout>
 
@@ -159,6 +162,7 @@
                     tools:layout_editor_absoluteY="180dp" />
 
                 <TextView
+                    android:id="@+id/naturetext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/mmedium"

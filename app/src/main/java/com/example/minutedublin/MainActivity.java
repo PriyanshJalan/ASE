@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements
                  */
                 Intent a= new Intent(MainActivity.this,SendReport.class);
                 startActivity(a);
-                Intent intent1 = getIntent();
+                Intent re = getIntent();
                 if(flag==1) {
                     StringBuilder textchange = new StringBuilder();
                     //Point point = Point.fromLngLat(relng, alertlat);

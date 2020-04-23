@@ -51,6 +51,7 @@ public class SendReport extends AppCompatActivity {
 
     private Button send;
     private ImageButton accident,crime,nature;
+    private TextView accidents,crimes,natures;
     private EditText detail;
 
     ////get permission
@@ -72,10 +73,8 @@ public class SendReport extends AppCompatActivity {
         reportPoint.append("location：(").append(Lng).
                 append(",").append("  ").append(Lat).append(")");
 
-        Intent intent1 =  new Intent(this,MainActivity.class);
-        MainActivity.relat = alertlat;
-        MainActivity.relng = alertlng;
-        MainActivity.flag = 1;
+        //Intent intent1 =  new Intent(this,MainActivity.class);
+
         //startActivity(intent1);
         reportlocation.setText(reportPoint);
 
@@ -85,10 +84,15 @@ public class SendReport extends AppCompatActivity {
         crime = (ImageButton) findViewById(R.id.crime);
         nature = (ImageButton) findViewById(R.id.nature);
 
+        accidents = (TextView) findViewById(R.id.accidenttext);
+        crimes = (TextView) findViewById(R.id.crimetext);
+        natures = (TextView) findViewById(R.id.naturetext);
+
         accident.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 type1 = "accident";
+                accidents.setTextColor(getResources().getColor(R.color.colorPrimary));
             }
         });
 
@@ -96,6 +100,7 @@ public class SendReport extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 type1="crime";
+                crimes.setTextColor(getResources().getColor(R.color.colorPrimary));
             }
         });
 
@@ -103,6 +108,7 @@ public class SendReport extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 type1="nature";
+                natures.setTextColor(getResources().getColor(R.color.colorPrimary));
             }
         });
 
@@ -136,6 +142,12 @@ public class SendReport extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
+                Intent re= new Intent(SendReport.this,MainActivity.class);
+                MainActivity.relat = alertlat;
+                MainActivity.relng = alertlng;
+                MainActivity.flag = 1;
+                startActivity(re);
             }
 
         });
