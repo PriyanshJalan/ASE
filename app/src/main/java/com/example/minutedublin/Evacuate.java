@@ -2,6 +2,7 @@ package com.example.minutedublin;
 
 import android.graphics.Color;
 import android.graphics.PointF;
+import android.location.LocationListener;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,16 +14,21 @@ import com.mapbox.android.core.location.LocationEngineProvider;
 import com.mapbox.android.core.location.LocationEngineRequest;
 import com.mapbox.android.core.location.LocationEngineResult;
 
+import android.view.View;
 import android.widget.Toast;
 
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.api.isochrone.IsochroneCriteria;
+import com.mapbox.api.isochrone.MapboxIsochrone;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.geojson.Polygon;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
@@ -33,25 +39,67 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.MapboxMapOptions;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.style.layers.FillLayer;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
+import com.mapbox.mapboxsdk.style.layers.Property;
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+import com.mapbox.mapboxsdk.utils.BitmapUtils;
+import com.mapbox.turf.TurfMeasurement;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import timber.log.Timber;
+
+import static com.mapbox.mapboxsdk.style.expressions.Expression.concat;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.eq;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.geometryType;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.get;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.interpolate;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.linear;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.literal;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.stop;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.toColor;
 import static com.mapbox.mapboxsdk.style.layers.Property.LINE_CAP_ROUND;
 import static com.mapbox.mapboxsdk.style.layers.Property.LINE_JOIN_BEVEL;
+import static com.mapbox.mapboxsdk.style.layers.Property.NONE;
+import static com.mapbox.mapboxsdk.style.layers.Property.SYMBOL_PLACEMENT_LINE;
+import static com.mapbox.mapboxsdk.style.layers.Property.VISIBLE;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillColor;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillOpacity;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineCap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineColor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineJoin;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineOpacity;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
-
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.symbolPlacement;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textAllowOverlap;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textColor;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textField;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textFont;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textHaloColor;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textHaloWidth;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textLetterSpacing;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textMaxAngle;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textPadding;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textSize;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility;
+import static com.mapbox.turf.TurfMeasurement.destination;
 /**
  * Query the building layer to draw an outline around the building that is in the middle of the map
  */
 public class Evacuate extends AppCompatActivity implements
-        PermissionsListener, MapboxMap.OnCameraMoveListener, MapboxMap.OnCameraIdleListener {
+        PermissionsListener {
 
     private static final long DEFAULT_INTERVAL_IN_MILLISECONDS = 1000L;
     private static final long DEFAULT_MAX_WAIT_TIME = DEFAULT_INTERVAL_IN_MILLISECONDS * 5;
@@ -61,6 +109,20 @@ public class Evacuate extends AppCompatActivity implements
     private LocationEngine locationEngine;
     private LocationChangeListeningActivityLocationCallback callback =
             new LocationChangeListeningActivityLocationCallback(this);
+    private static final String ISOCHRONE_RESPONSE_GEOJSON_SOURCE_ID = "ISOCHRONE_RESPONSE_GEOJSON_SOURCE_ID";
+    private static final String ISOCHRONE_FILL_LAYER = "ISOCHRONE_FILL_LAYER";
+    private static final String ISOCHRONE_LINE_LAYER = "ISOCHRONE_LINE_LAYER";
+    private static final String TIME_LABEL_LAYER_ID = "TIME_LABEL_LAYER_ID";
+    private static final String MAP_CLICK_SOURCE_ID = "MAP_CLICK_SOURCE_ID";
+    private static final String MAP_CLICK_MARKER_ICON_ID = "MAP_CLICK_MARKER_ICON_ID";
+    private static final String MAP_CLICK_MARKER_LAYER_ID = "MAP_CLICK_MARKER_LAYER_ID";
+    private static final String[] contourColors = new String[]{"FFFF00", "80f442"};
+    private static final int[] contourMinutes = new int[]{2, 5};
+    private Location lastSelectedLatLng;
+    private boolean usePolygon = false;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,21 +140,29 @@ public class Evacuate extends AppCompatActivity implements
                                 @Override
                                 public void onMapReady(@NonNull final MapboxMap mapboxMap) {
                                     Evacuate.this.mapboxMap = mapboxMap;
-                                    mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
+                                    mapboxMap.setStyle(new Style.Builder().fromUri(Style.MAPBOX_STREETS)
+                                                    //Add a SymbolLayer to the map so that the map click point has a visual marker. This is where the
+                                                    // Isochrone API information radiates from.
+                                                    .withSource(new GeoJsonSource(MAP_CLICK_SOURCE_ID))
+                                                    .withSource(new GeoJsonSource(ISOCHRONE_RESPONSE_GEOJSON_SOURCE_ID))
+                                                    .withLayer(new SymbolLayer(MAP_CLICK_MARKER_LAYER_ID, MAP_CLICK_SOURCE_ID).withProperties())
+                                            , new Style.OnStyleLoaded() {
                                         @Override
                                         public void onStyleLoaded(@NonNull Style style) {
                                             enableLocationComponent(style);
                                             setUpLineLayer(style);
-                                            mapboxMap.addOnCameraMoveListener(Evacuate.this);
-                                            mapboxMap.addOnCameraIdleListener(Evacuate.this);
                                             updateOutline(style);
+                                            lastSelectedLatLng= mapboxMap.getLocationComponent().getLastKnownLocation();
+                                            assert lastSelectedLatLng != null;
+                                            makeIsochroneApiCall(style, lastSelectedLatLng);
+                                            initLineLayer(style);
+                                            SymbolLayer timeSymbolLayer = style.getLayerAs(TIME_LABEL_LAYER_ID);
                                         }
                                     });
                                 }
                             }
         );
     }
-
 
 
     /**
@@ -113,15 +183,6 @@ public class Evacuate extends AppCompatActivity implements
         updateOutline(loadedMapStyle);
     }
 
-//  @Override
-//  public void OnCameraMove() {
-//    mapboxMap.getStyle(new Style.OnStyleLoaded() {
-//      @Override
-//      public void onStyleLoaded(@NonNull Style style) {
-//        updateOutline(style);
-//      }
-//    });
-//  }
 
     /**
      * Query the map for a building Feature in the map's building layer. The query happens in the middle of the
@@ -253,26 +314,6 @@ public class Evacuate extends AppCompatActivity implements
         }
     }
 
-    @Override
-    public void onCameraMove() {
-        mapboxMap.getStyle(new Style.OnStyleLoaded() {
-            @Override
-            public void onStyleLoaded(@NonNull Style style) {
-                updateOutline(style);
-            }
-        });
-
-    }
-
-    @Override
-    public void onCameraIdle() {
-        mapboxMap.getStyle(new Style.OnStyleLoaded() {
-            @Override
-            public void onStyleLoaded(@NonNull Style style) {
-                updateOutline(style);
-            }
-        });
-    }
 
     private static class LocationChangeListeningActivityLocationCallback
             implements LocationEngineCallback<LocationEngineResult> {
@@ -302,9 +343,16 @@ public class Evacuate extends AppCompatActivity implements
                 // Pass the new location to the Maps SDK's LocationComponent
                 if (activity.mapboxMap != null && result.getLastLocation() != null) {
                     activity.mapboxMap.getLocationComponent().forceLocationUpdate(result.getLastLocation());
-
-                }
+                    activity.mapboxMap.getStyle(new Style.OnStyleLoaded() {
+                        @Override
+                        public void onStyleLoaded(@NonNull Style style) {
+                            activity.updateOutline(style);
+                            activity.lastSelectedLatLng = result.getLastLocation();
+                            activity.makeIsochroneApiCall(style, activity.lastSelectedLatLng);
+                        }
+                });
             }
+        }
         }
 
         /**
@@ -320,6 +368,106 @@ public class Evacuate extends AppCompatActivity implements
                         Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    /**
+     * Make a request to the Mapbox Isochrone API
+     *
+     * @param mapClickPoint The center point of the isochrone. It is part of the API request.
+     */
+    private void makeIsochroneApiCall(@NonNull Style style, @NonNull Location mapClickPoint) {
+
+        MapboxIsochrone mapboxIsochroneRequest = MapboxIsochrone.builder()
+                .accessToken(getString(R.string.access_token))
+                .profile(IsochroneCriteria.PROFILE_WALKING)
+                .addContoursMinutes(contourMinutes[0], contourMinutes[1])
+                .addContoursColors(contourColors[0], contourColors[1])
+                .generalize(2f)
+                .denoise(.4f)
+                .coordinates(Point.fromLngLat(mapClickPoint.getLongitude(), mapClickPoint.getLatitude()))
+                .build();
+
+        mapboxIsochroneRequest.enqueueCall(new Callback<FeatureCollection>() {
+            @Override
+            public void onResponse(Call<FeatureCollection> call, Response<FeatureCollection> response) {
+                // Redraw Isochrone information based on response body
+                if (response.body() != null && response.body().features() != null) {
+                    GeoJsonSource source = style.getSourceAs(ISOCHRONE_RESPONSE_GEOJSON_SOURCE_ID);
+                    if (source != null && response.body().features().size() > 0) {
+                        source.setGeoJson(response.body());
+                    }
+
+                    if (!usePolygon) {
+                        mapboxMap.getStyle(new Style.OnStyleLoaded() {
+                            @Override
+                            public void onStyleLoaded(@NonNull Style style) {
+
+                                SymbolLayer timeLabelSymbolLayer;
+
+                                // Check to see whether the LineLayer for time labels has already been created
+                                if (style.getLayerAs(TIME_LABEL_LAYER_ID) == null) {
+                                    timeLabelSymbolLayer = new SymbolLayer(TIME_LABEL_LAYER_ID,
+                                            ISOCHRONE_RESPONSE_GEOJSON_SOURCE_ID);
+
+                                    styleLineLayer(timeLabelSymbolLayer);
+
+                                    // Add the time label LineLayer to the map
+                                    style.addLayer(timeLabelSymbolLayer);
+
+                                } else {
+                                    styleLineLayer(style.getLayerAs(TIME_LABEL_LAYER_ID));
+                                }
+                            }
+                        });
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FeatureCollection> call, Throwable throwable) {
+                Timber.d("Request failed: %s", throwable.getMessage());
+            }
+        });
+    }
+
+    private SymbolLayer styleLineLayer(@NonNull SymbolLayer timeLabelLayerToStyle) {
+        // Use the Maps SDK's data-driven styling properties to style the
+        // the time label LineLayer
+        timeLabelLayerToStyle.setProperties(
+                visibility(Property.VISIBLE),
+                textField(concat(get("contour"), literal(" MIN"))),
+                textFont(new String[]{"DIN Offc Pro Bold", "Roboto Black"}),
+                symbolPlacement(SYMBOL_PLACEMENT_LINE),
+                textAllowOverlap(true),
+                textPadding(1f),
+                textMaxAngle(90f),
+                textSize(interpolate(linear(), literal(1.2f),
+                        stop(2, 14),
+                        stop(8, 18),
+                        stop(22, 30)
+                )),
+                textLetterSpacing(0.1f),
+                textHaloColor(Color.parseColor("#343332")),
+                textColor(toColor(get("color"))),
+                textHaloWidth(4f)
+        );
+        return timeLabelLayerToStyle;
+    }
+
+
+    /**
+     * Add a LineLayer so that that lines returned by the Isochrone API response can be displayed
+     */
+    private void initLineLayer(@NonNull Style style) {
+        // Create and style a LineLayer based on information in the Isochrone API response
+        LineLayer isochroneLineLayer = new LineLayer(ISOCHRONE_LINE_LAYER, ISOCHRONE_RESPONSE_GEOJSON_SOURCE_ID);
+        isochroneLineLayer.setProperties(
+                lineColor(get("color")),
+                lineWidth(5f),
+                lineOpacity(.8f)); // You could also pass in get("opacity")) instead of a hardcoded value
+        isochroneLineLayer.setFilter(eq(geometryType(), literal("LineString")));
+        style.addLayerBelow(isochroneLineLayer, MAP_CLICK_MARKER_LAYER_ID);
     }
 
     @Override
