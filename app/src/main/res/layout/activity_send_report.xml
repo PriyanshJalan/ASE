@@ -94,16 +94,17 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
+                <ImageButton
+                    android:id="@+id/accident"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:scaleType="fitXY"
                     android:layout_marginBottom="8dp"
                     android:src="@drawable/accident"
                     tools:layout_editor_absoluteX="16dp"
                     tools:layout_editor_absoluteY="180dp" />
 
                 <TextView
-                    android:id="@+id/review"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/mmedium"
@@ -120,16 +121,17 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
+                <ImageButton
+                    android:id="@+id/crime"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:scaleType="fitXY"
                     android:layout_marginBottom="8dp"
                     android:src="@drawable/crime"
                     tools:layout_editor_absoluteX="16dp"
                     tools:layout_editor_absoluteY="180dp" />
 
                 <TextView
-                    android:id="@+id/network"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/mmedium"
@@ -146,21 +148,22 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="45dp"
+                <ImageButton
+                    android:id="@+id/nature"
+                    android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:scaleType="fitXY"
                     android:layout_marginBottom="8dp"
                     android:src="@drawable/nature"
                     tools:layout_editor_absoluteX="16dp"
                     tools:layout_editor_absoluteY="180dp" />
 
                 <TextView
-                    android:id="@+id/plugins"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/mmedium"
-                    android:text="Nature"
                     android:textColor="#172646"
+                    android:text="nature"
                     android:textSize="14sp" />
 
             </LinearLayout>
@@ -199,7 +202,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView4">
 
         <EditText
-            android:id="@+id/editview"
+            android:id="@+id/detail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
