@@ -339,6 +339,7 @@ public class MainActivity extends AppCompatActivity implements
                 startActivity(new Intent(MainActivity.this, AboutUs.class));
                 break;
             case R.id.nav_setting:
+                startActivity(new Intent(MainActivity.this, SettingActivity.class));
                 break;
         }
     }

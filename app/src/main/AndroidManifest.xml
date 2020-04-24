@@ -23,6 +23,7 @@
         <activity android:name=".Wifip2p" />
         <activity android:name=".Wifip2pAnimation" />
         <activity android:name=".WiFiDirectBroadcastReceiver" />
+        <activity android:name=".SettingActivity" />
         <activity
             android:name=".SplashActivity"
             android:theme="@style/AppTheme.SplashScreen">
