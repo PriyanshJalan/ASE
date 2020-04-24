@@ -39,6 +39,7 @@ import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
+import com.mapbox.turf.TurfMeasurement;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -108,8 +109,8 @@ public class MovingIconWithTrailingLineActivity extends AppCompatActivity {
             // Use the Mapbox Directions API to get a directions route
 //            getRoute(originPoint, destinationPoint);
             getRoute(
-                    Point.fromLngLat(-6.2409210205078125, 53.342763063131976),
-                    Point.fromLngLat(-6.307868957519531, 53.33948337211111)
+                    Point.fromLngLat(-6.33463571889, 53.4305245967),
+                    Point.fromLngLat(-6.29261846108, 53.3920439993)
             );
 
             ///////show healthcenter
@@ -217,8 +218,8 @@ public class MovingIconWithTrailingLineActivity extends AppCompatActivity {
 
   private Animator createLatLngAnimator(Point currentPosition, Point targetPosition) {
     ValueAnimator latLngAnimator = ValueAnimator.ofObject(new PointEvaluator(), currentPosition, targetPosition);
-    //latLngAnimator.setDuration((long) TurfMeasurement.distance(currentPosition, targetPosition, "meters"));
-    latLngAnimator.setDuration((long)30);
+//    latLngAnimator.setDuration((long) TurfMeasurement.distance(currentPosition, targetPosition, "kilometres"));
+    latLngAnimator.setDuration((long)160);
     latLngAnimator.setInterpolator(new LinearInterpolator());
     latLngAnimator.addListener(new AnimatorListenerAdapter() {
       @Override
@@ -280,7 +281,7 @@ public class MovingIconWithTrailingLineActivity extends AppCompatActivity {
               new LatLngBounds.Builder()
                 .include(new LatLng(origin.latitude(), origin.longitude()))
                 .include(new LatLng(destination.latitude(), destination.longitude()))
-                .build(), 50), 1);
+                .build(), 450), 10);
 
             initData(style,FeatureCollection.fromFeature(
               Feature.fromGeometry(LineString.fromPolyline(currentRoute.geometry(), PRECISION_6))));

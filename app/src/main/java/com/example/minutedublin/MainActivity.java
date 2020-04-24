@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements
     private int trans1 = 0;
     private int trans2 = 0;
     private ImageView clearview;
+    private ImageView evacview;
 
 
     /////symblelayer
@@ -214,6 +215,14 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
+        ////evacuate button
+        evacview = (ImageView) findViewById(R.id.exit);
+        evacview.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+
+            startActivity(new Intent(MainActivity.this, Evacuate.class));
+        }});
         //notification.setText("here comes a disaster event, the location is: (-6.237489, 53.322813) ");
     }
 
@@ -321,9 +330,9 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
 
-        if (item.getItemId()==R.id.show_ways){
-            startActivity(new Intent(MainActivity.this, Evacuate.class));
-        }
+//        if (item.getItemId()==R.id.show_ways){
+//            startActivity(new Intent(MainActivity.this, Evacuate.class));
+//        }
         if (item.getItemId()==R.id.show_rescue){
             startActivity(new Intent(MainActivity.this, MovingIconWithTrailingLineActivity.class));
         }
@@ -435,7 +444,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
-        this.mapboxMap.setMinZoomPreference(6);
+        this.mapboxMap.setMinZoomPreference(9);
         mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {

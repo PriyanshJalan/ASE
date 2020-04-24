@@ -10,9 +10,7 @@
     <item
         android:id="@+id/show_reports"
         android:title="Show Reports" />
-    <item
-        android:id="@+id/show_ways"
-        android:title="Evacuate Route" />
+
     <item
         android:id="@+id/show_rescue"
         android:title="Emergency Services" />
