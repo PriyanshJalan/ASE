@@ -86,7 +86,7 @@ public class TrafficReRouting extends AppCompatActivity implements MapboxMap.OnM
     private Point direc_originPoint = Point.fromLngLat(-6.2450408935546875, 53.35372769822772);
     private Point direc_destinationPoint = Point.fromLngLat(-6.33109717302, 53.4116303481);
     private Point emer_originPoint = Point.fromLngLat(-6.33463571889, 53.4305245967);
-    private Point emer_destinationPoint = Point.fromLngLat(-6.29261846108, 53.3920439993);
+    private Point emer_destinationPoint = Point.fromLngLat(-6.33109717302, 53.4116303481);
 
     private Animator currentAnimator;
     private LatLng markerIconCurrentLocation;
@@ -239,73 +239,126 @@ public class TrafficReRouting extends AppCompatActivity implements MapboxMap.OnM
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
         clkCount++;
+        boolean crossed = false;
 
-        Toast.makeText(TrafficReRouting.this,"Intersection", Toast.LENGTH_SHORT).show();
-        if(clkCount == 1) {
-            getRoute(emer_originPoint,emer_destinationPoint);
+        if (clkCount == 1) {
+            getRoute(emer_originPoint, emer_destinationPoint);
         }
+
+
+        // Finding Intersection
+        //        LineIntersectsResult result = lineIntersects(direc_originPoint, direc_destinationPoint, emer_originPoint, emer_destinationPoint);
+//
+//        if (result != null && result.onLine1() && result.onLine2()) {
+//            crossed = !crossed;
+//            // Cross the line
+//            Point cross = Point.fromLngLat(result.horizontalIntersection(), result.verticalIntersection());
+//
+//            if (crossed) {
+//                Toast.makeText(TrafficReRouting.this, "Crossed", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            else {
+//                Toast.makeText(TrafficReRouting.this, "Not Crossed", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//
+//        else{
+//            if (crossed) {
+//                Toast.makeText(TrafficReRouting.this, "Not Crossed", Toast.LENGTH_SHORT).show();
+//            }
+//            else {
+//                Toast.makeText(TrafficReRouting.this, "Crossed", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//
+//        return false;
+//    }
+
+//    private static LineIntersectsResult lineIntersects(Point start1, Point end1, Point start2, Point end2) {
+//        return lineIntersects(
+//                start1.latitude(), start1.longitude(),
+//                end1.latitude(), end1.longitude(),
+//                start2.latitude(), start2.longitude(),
+//                end2.latitude(), end2.longitude());
+//    }
+//
+//    private static LineIntersectsResult lineIntersects(double d, double d2, double d3, double d4, double d5, double d6, double d7, double d8) {
+//        LineIntersectsResult lineIntersectsResult = new LineIntersectsResult();
+//        double d9 = ((d8 - d6) * (d3 - d)) - ((d7 - d5) * (d4 - d2));
+//        if (d9 != 0.0d) {
+//            double d10 = d2 - d6;
+//            double d11 = d - d5;
+//            double d12 = ((d7 - d5) * d10) - ((d8 - d6) * d11);
+//            d10 = (d10 * (d3 - d)) - (d11 * (d4 - d2));
+//            d11 = d12 / d9;
+//            d9 = d10 / d9;
+//            lineIntersectsResult.setX(Double.valueOf(((d3 - d) * d11) + d));
+//            lineIntersectsResult.setY(Double.valueOf(((d4 - d2) * d11) + d2));
+//            if (d11 > 0.0d && d11 < 1.0d) {
+//                lineIntersectsResult.setOnLine1(true);
+//            }
+//            if (d9 > 0.0d && d9 < 1.0d) {
+//                lineIntersectsResult.setOnLine2(true);
+//            }
+//            return (lineIntersectsResult.isOnLine1() && lineIntersectsResult.isOnLine2()) ? lineIntersectsResult : null;
+//        } else if (lineIntersectsResult.getX() == null || lineIntersectsResult.getY() == null) {
+//            return null;
+//        } else {
+//            return lineIntersectsResult;
+//        }
+//    }
+//    private static LineIntersectsResult lineIntersects(double line1StartX, double line1StartY,
+//                                                       double line1EndX, double line1EndY,
+//                                                       double line2StartX, double line2StartY,
+//                                                       double line2EndX, double line2EndY) {
+//
+//        LineIntersectsResult result = LineIntersectsResult.builder()
+//                .onLine1(false)
+//                .onLine2(false)
+//                .build();
+//
+//        double denominator = ((line2EndY - line2StartY) * (line1EndX - line1StartX))
+//                - ((line2EndX - line2StartX) * (line1EndY - line1StartY));
+//        if (denominator != 0) {
+//            if (result.horizontalIntersection() != null && result.verticalIntersection() != null) {
+//                return result;
+//            } else {
+//                return null;
+//            }
+//        }
+//        double varA = line1StartY - line2StartY;
+//        double varB = line1StartX - line2StartX;
+//        double numerator1 = ((line2EndX - line2StartX) * varA) - ((line2EndY - line2StartY) * varB);
+//        double numerator2 = ((line1EndX - line1StartX) * varA) - ((line1EndY - line1StartY) * varB);
+//        varA = numerator1 / denominator;
+//        varB = numerator2 / denominator;
+//
+//        // if we cast these lines infinitely in both directions, they intersect here:
+//        result = result.toBuilder().horizontalIntersection(line1StartX
+//                + (varA * (line1EndX - line1StartX))).build();
+//        result = result.toBuilder().verticalIntersection(line1StartY
+//                + (varA * (line1EndY - line1StartY))).build();
+//
+//        // if line1 is a segment and line2 is infinite, they intersect if:
+//        if (varA > 0 && varA < 1) {
+//            result = result.toBuilder().onLine1(true).build();
+//        }
+//        // if line2 is a segment and line1 is infinite, they intersect if:
+//        if (varB > 0 && varB < 1) {
+//            result = result.toBuilder().onLine2(true).build();
+//        }
+//        // if line1 and line2 are segments, they intersect if both of the above are true
+//        if (result.onLine1() && result.onLine2()) {
+//            return result;
+//        } else {
+//            return null;
+//        }
 
         return false;
     }
 
-    private static LineIntersectsResult lineIntersects(Point start1, Point end1, Point start2, Point end2) {
-        return lineIntersects(start1.longitude(),
-                start1.latitude(),
-                end1.longitude(),
-                end1.latitude(),
-                start2.longitude(),
-                start2.latitude(),
-                end2.longitude(),
-                end2.latitude());
-    }
 
-    private static LineIntersectsResult lineIntersects(double line1StartX, double line1StartY,
-                                                       double line1EndX, double line1EndY,
-                                                       double line2StartX, double line2StartY,
-                                                       double line2EndX, double line2EndY) {
-
-        LineIntersectsResult result = LineIntersectsResult.builder()
-                .onLine1(false)
-                .onLine2(false)
-                .build();
-
-        double denominator = ((line2EndY - line2StartY) * (line1EndX - line1StartX))
-                - ((line2EndX - line2StartX) * (line1EndY - line1StartY));
-        if (denominator == 0) {
-            if (result.horizontalIntersection() != null && result.verticalIntersection() != null) {
-                return result;
-            } else {
-                return null;
-            }
-        }
-        double varA = line1StartY - line2StartY;
-        double varB = line1StartX - line2StartX;
-        double numerator1 = ((line2EndX - line2StartX) * varA) - ((line2EndY - line2StartY) * varB);
-        double numerator2 = ((line1EndX - line1StartX) * varA) - ((line1EndY - line1StartY) * varB);
-        varA = numerator1 / denominator;
-        varB = numerator2 / denominator;
-
-        // if we cast these lines infinitely in both directions, they intersect here:
-        result = result.toBuilder().horizontalIntersection(line1StartX
-                + (varA * (line1EndX - line1StartX))).build();
-        result = result.toBuilder().verticalIntersection(line1StartY
-                + (varA * (line1EndY - line1StartY))).build();
-
-        // if line1 is a segment and line2 is infinite, they intersect if:
-        if (varA > 0 && varA < 1) {
-            result = result.toBuilder().onLine1(true).build();
-        }
-        // if line2 is a segment and line1 is infinite, they intersect if:
-        if (varB > 0 && varB < 1) {
-            result = result.toBuilder().onLine2(true).build();
-        }
-        // if line1 and line2 are segments, they intersect if both of the above are true
-        if (result.onLine1() && result.onLine2()) {
-            return result;
-        } else {
-            return null;
-        }
-    }
 
     /**
      * Add data to the map once the GeoJSON has been loaded
