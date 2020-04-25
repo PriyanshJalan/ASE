@@ -3,6 +3,7 @@ package com.example.minutedublin;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.animation.LinearInterpolator;
 import android.widget.Toast;
@@ -83,7 +85,13 @@ public class TrafficReRouting extends AppCompatActivity implements MapboxMap.OnM
     //private Point originPoint = Point.fromLngLat(-6.2450408935546875, 53.35372769822772);
     //private Point destinationPoint = Point.fromLngLat(-6.294994354248047, 53.34850191547604);
     private Animator currentAnimator;
+    private LatLng markerIconCurrentLocation;
+    private GeoJsonSource dotGeoJsonSource;
+    private ValueAnimator markerIconAnimator;
+    private Handler handler;
+    private Runnable runnable;
     int count=0;
+    int clkCount = 0;
 
 
     @Override
@@ -234,9 +242,9 @@ public class TrafficReRouting extends AppCompatActivity implements MapboxMap.OnM
 
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
-        count++;
+        clkCount++;
         Toast.makeText(TrafficReRouting.this,"Click", Toast.LENGTH_SHORT).show();
-        if(count == 1) {
+        if(clkCount == 1) {
             getRoute(
                     Point.fromLngLat(-6.33463571889, 53.4305245967),
                     Point.fromLngLat(-6.29261846108, 53.3920439993)
@@ -275,19 +283,74 @@ public class TrafficReRouting extends AppCompatActivity implements MapboxMap.OnM
         }
     }
 
-    /**
-     * Set up the repeat logic for moving the icon along the route.
-     */
-    private void animate() {
-        // Check if we are at the end of the points list
-        if ((routeCoordinateList.size() - 1 > routeIndex)) {
-            Point indexPoint = routeCoordinateList.get(routeIndex);
-            Point newPoint = Point.fromLngLat(indexPoint.longitude(), indexPoint.latitude());
-            currentAnimator = createLatLngAnimator(indexPoint, newPoint);
-            currentAnimator.start();
-            routeIndex++;
+//    /**
+//     * Set up the repeat logic for moving the icon along the route.
+//     */
+//    private void animate() {
+//        // Check if we are at the end of the points list
+//        if ((routeCoordinateList.size() - 1 > routeIndex)) {
+//            Point indexPoint = routeCoordinateList.get(routeIndex);
+//            Point newPoint = Point.fromLngLat(indexPoint.longitude(), indexPoint.latitude());
+//            currentAnimator = createLatLngAnimator(indexPoint, newPoint);
+//            currentAnimator.start();
+//            routeIndex++;
+//        }
+//    }
+private void animate() {
+    // Animating the marker requires the use of both the ValueAnimator and a handler.
+    // The ValueAnimator is used to move the marker between the GeoJSON points, this is
+    // done linearly. The handler is used to move the marker along the GeoJSON points.
+    handler = new Handler();
+    runnable = new Runnable() {
+        @Override
+        public void run() {
+            // Check if we are at the end of the points list, if so we want to stop using
+            // the handler.
+            if ((routeCoordinateList.size() - 1 > count)) {
+
+                Point nextLocation = routeCoordinateList.get(count + 1);
+
+                if (markerIconAnimator != null && markerIconAnimator.isStarted()) {
+                    markerIconCurrentLocation = (LatLng) markerIconAnimator.getAnimatedValue();
+                    markerIconAnimator.cancel();
+                }
+                markerIconAnimator = ObjectAnimator
+                        .ofObject(latLngEvaluator, count == 0 || markerIconCurrentLocation == null
+                                        ? new LatLng(37.61501, -122.385374)
+                                        : markerIconCurrentLocation,
+                                new LatLng(nextLocation.latitude(), nextLocation.longitude()))
+                        .setDuration(300);
+                markerIconAnimator.setInterpolator(new LinearInterpolator());
+
+                markerIconAnimator.addUpdateListener(animatorUpdateListener);
+                markerIconAnimator.start();
+
+                // Keeping the current point count we are on.
+                count++;
+
+                // Once we finish we need to repeat the entire process by executing the
+                // handler again once the ValueAnimator is finished.
+                handler.postDelayed(this, 300);
+            }
         }
-    }
+    };
+    handler.post(runnable);
+}
+
+    /**
+     * Listener interface for when the ValueAnimator provides an updated value
+     */
+    private final ValueAnimator.AnimatorUpdateListener animatorUpdateListener =
+            new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    LatLng animatedPosition = (LatLng) valueAnimator.getAnimatedValue();
+                    if (dotGeoJsonSource != null) {
+                        dotGeoJsonSource.setGeoJson(Point.fromLngLat(
+                                animatedPosition.getLongitude(), animatedPosition.getLatitude()));
+                    }
+                }
+            };
 
     private static class PointEvaluator implements TypeEvaluator<Point> {
 
@@ -386,8 +449,10 @@ public class TrafficReRouting extends AppCompatActivity implements MapboxMap.OnM
      * Add various sources to the map.
      */
     private void initSources(@NonNull Style loadedMapStyle, @NonNull FeatureCollection featureCollection) {
-        loadedMapStyle.addSource(pointSource = new GeoJsonSource(DOT_SOURCE_ID, featureCollection));
-        loadedMapStyle.addSource(lineSource = new GeoJsonSource(LINE_SOURCE_ID));
+        dotGeoJsonSource = new GeoJsonSource(DOT_SOURCE_ID, featureCollection);
+        loadedMapStyle.addSource(dotGeoJsonSource);
+//    loadedMapStyle.addSource(pointSource = new GeoJsonSource(DOT_SOURCE_ID, featureCollection));
+        loadedMapStyle.addSource(new GeoJsonSource(LINE_SOURCE_ID, featureCollection));
     }
 
     /**
@@ -464,6 +529,23 @@ public class TrafficReRouting extends AppCompatActivity implements MapboxMap.OnM
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
+
+    /**
+     * Method is used to interpolate the SymbolLayer icon animation.
+     */
+    private static final TypeEvaluator<LatLng> latLngEvaluator = new TypeEvaluator<LatLng>() {
+
+        private final LatLng latLng = new LatLng();
+
+        @Override
+        public LatLng evaluate(float fraction, LatLng startValue, LatLng endValue) {
+            latLng.setLatitude(startValue.getLatitude()
+                    + ((endValue.getLatitude() - startValue.getLatitude()) * fraction));
+            latLng.setLongitude(startValue.getLongitude()
+                    + ((endValue.getLongitude() - startValue.getLongitude()) * fraction));
+            return latLng;
+        }
+    };
 
 
 }
