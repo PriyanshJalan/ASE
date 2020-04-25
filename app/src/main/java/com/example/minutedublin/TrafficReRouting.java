@@ -82,8 +82,12 @@ public class TrafficReRouting extends AppCompatActivity implements MapboxMap.OnM
     private List<Point> routeCoordinateList;
     private List<Point> markerLinePointList = new ArrayList<>();
     private int routeIndex;
-    //private Point originPoint = Point.fromLngLat(-6.2450408935546875, 53.35372769822772);
-    //private Point destinationPoint = Point.fromLngLat(-6.294994354248047, 53.34850191547604);
+
+    private Point direc_originPoint = Point.fromLngLat(-6.2450408935546875, 53.35372769822772);
+    private Point direc_destinationPoint = Point.fromLngLat(-6.33109717302, 53.4116303481);
+    private Point emer_originPoint = Point.fromLngLat(-6.33463571889, 53.4305245967);
+    private Point emer_destinationPoint = Point.fromLngLat(-6.29261846108, 53.3920439993);
+
     private Animator currentAnimator;
     private LatLng markerIconCurrentLocation;
     private GeoJsonSource dotGeoJsonSource;
@@ -115,12 +119,6 @@ public class TrafficReRouting extends AppCompatActivity implements MapboxMap.OnM
                 mapboxMap.setStyle(Style.LIGHT, new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
-                        // Use the Mapbox Directions API to get a directions route
-//            getRoute(originPoint, destinationPoint);
-//                        getRoute(
-//                                Point.fromLngLat(-6.33463571889, 53.4305245967),
-//                                Point.fromLngLat(-6.29261846108, 53.3920439993)
-//                        );
 
                         ///////show healthcenter
                         try {
@@ -176,12 +174,10 @@ public class TrafficReRouting extends AppCompatActivity implements MapboxMap.OnM
                             Log.d("Error: ", exception.getMessage());
                         }
 
-                        Point originPoint = Point.fromLngLat(-6.2450408935546875, 53.35372769822772);
-                        Point destinationPoint = Point.fromLngLat(-6.294994354248047, 53.34850191547604);
 
                         MapboxDirections client = MapboxDirections.builder()
-                                .origin(originPoint)
-                                .destination(destinationPoint)
+                                .origin(direc_originPoint)
+                                .destination(direc_destinationPoint)
                                 .overview(DirectionsCriteria.OVERVIEW_FULL)
                                 .profile(DirectionsCriteria.PROFILE_DRIVING_TRAFFIC)
                                 .accessToken(getString(R.string.access_token))
@@ -207,7 +203,7 @@ public class TrafficReRouting extends AppCompatActivity implements MapboxMap.OnM
                                         GeoJsonSource source = new GeoJsonSource("vehicle");
                                         LineLayer routeLayer = new LineLayer("vehicle-layer", "vehicle");
 
-// Add the LineLayer to the map. This layer will display the directions route.
+                                        // Add the LineLayer to the map. This layer will display the directions route.
                                         routeLayer.setProperties(
                                                 lineCap(Property.LINE_CAP_ROUND),
                                                 lineJoin(Property.LINE_JOIN_ROUND),
@@ -243,27 +239,73 @@ public class TrafficReRouting extends AppCompatActivity implements MapboxMap.OnM
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
         clkCount++;
-        Toast.makeText(TrafficReRouting.this,"Click", Toast.LENGTH_SHORT).show();
-        if(clkCount == 1) {
-            getRoute(
-                    Point.fromLngLat(-6.33463571889, 53.4305245967),
-                    Point.fromLngLat(-6.29261846108, 53.3920439993)
-            );
-        }
 
-//        LineIntersectsResult lineIntersects = lineIntersects(
-//                point.getCoordinates().getLongitude(),
-//                point.getCoordinates().getLatitude(),
-//                ((Point) fromGeometry.getGeometry()).getCoordinates().getLongitude(),
-//                ((Point) fromGeometry.getGeometry()).getCoordinates().getLatitude(),
-//                ((Point) fromGeometry2.getGeometry()).getCoordinates().getLongitude(),
-//                ((Point) fromGeometry2.getGeometry()).getCoordinates().getLatitude(),
-//                ((Point) fromGeometry3.getGeometry()).getCoordinates().getLongitude(),
-//                ((Point) fromGeometry3.getGeometry()).getCoordinates().getLatitude());
+        Toast.makeText(TrafficReRouting.this,"Intersection", Toast.LENGTH_SHORT).show();
+        if(clkCount == 1) {
+            getRoute(emer_originPoint,emer_destinationPoint);
+        }
 
         return false;
     }
 
+    private static LineIntersectsResult lineIntersects(Point start1, Point end1, Point start2, Point end2) {
+        return lineIntersects(start1.longitude(),
+                start1.latitude(),
+                end1.longitude(),
+                end1.latitude(),
+                start2.longitude(),
+                start2.latitude(),
+                end2.longitude(),
+                end2.latitude());
+    }
+
+    private static LineIntersectsResult lineIntersects(double line1StartX, double line1StartY,
+                                                       double line1EndX, double line1EndY,
+                                                       double line2StartX, double line2StartY,
+                                                       double line2EndX, double line2EndY) {
+
+        LineIntersectsResult result = LineIntersectsResult.builder()
+                .onLine1(false)
+                .onLine2(false)
+                .build();
+
+        double denominator = ((line2EndY - line2StartY) * (line1EndX - line1StartX))
+                - ((line2EndX - line2StartX) * (line1EndY - line1StartY));
+        if (denominator == 0) {
+            if (result.horizontalIntersection() != null && result.verticalIntersection() != null) {
+                return result;
+            } else {
+                return null;
+            }
+        }
+        double varA = line1StartY - line2StartY;
+        double varB = line1StartX - line2StartX;
+        double numerator1 = ((line2EndX - line2StartX) * varA) - ((line2EndY - line2StartY) * varB);
+        double numerator2 = ((line1EndX - line1StartX) * varA) - ((line1EndY - line1StartY) * varB);
+        varA = numerator1 / denominator;
+        varB = numerator2 / denominator;
+
+        // if we cast these lines infinitely in both directions, they intersect here:
+        result = result.toBuilder().horizontalIntersection(line1StartX
+                + (varA * (line1EndX - line1StartX))).build();
+        result = result.toBuilder().verticalIntersection(line1StartY
+                + (varA * (line1EndY - line1StartY))).build();
+
+        // if line1 is a segment and line2 is infinite, they intersect if:
+        if (varA > 0 && varA < 1) {
+            result = result.toBuilder().onLine1(true).build();
+        }
+        // if line2 is a segment and line1 is infinite, they intersect if:
+        if (varB > 0 && varB < 1) {
+            result = result.toBuilder().onLine2(true).build();
+        }
+        // if line1 and line2 are segments, they intersect if both of the above are true
+        if (result.onLine1() && result.onLine2()) {
+            return result;
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Add data to the map once the GeoJSON has been loaded
