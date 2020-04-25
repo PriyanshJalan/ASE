@@ -334,8 +334,13 @@ public class MainActivity extends AppCompatActivity implements
 //            startActivity(new Intent(MainActivity.this, Evacuate.class));
 //        }
         if (item.getItemId()==R.id.show_rescue){
+            startActivity(new Intent(MainActivity.this, MovingIconWithTrailingLineActivity.class));
+        }
+
+        if (item.getItemId()==R.id.vehicle_reroute){
             startActivity(new Intent(MainActivity.this, TrafficReRouting.class));
         }
+
         return super.onOptionsItemSelected(item);
     }
 

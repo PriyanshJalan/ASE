@@ -14,4 +14,10 @@
     <item
         android:id="@+id/show_rescue"
         android:title="Emergency Services" />
+
+
+    <item
+        android:id="@+id/vehicle_reroute"
+        android:title="Vehicle Reroute" />
+
 </menu>

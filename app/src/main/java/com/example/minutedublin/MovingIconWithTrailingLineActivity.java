@@ -109,8 +109,8 @@ public class MovingIconWithTrailingLineActivity extends AppCompatActivity {
             // Use the Mapbox Directions API to get a directions route
 //            getRoute(originPoint, destinationPoint);
             getRoute(
-                    Point.fromLngLat(-6.33463571889, 53.4305245967),
-                    Point.fromLngLat(-6.29261846108, 53.3920439993)
+                    Point.fromLngLat(-6.2635216607018, 53.3955275266125),
+                    Point.fromLngLat(-6.2674, 53.3547)
             );
 
             ///////show healthcenter
@@ -166,6 +166,29 @@ public class MovingIconWithTrailingLineActivity extends AppCompatActivity {
             } catch (URISyntaxException exception) {
               Log.d("Error: ", exception.getMessage());
             }
+
+
+            ////show report
+            try {
+              URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/report/fetch_reports");
+              //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
+              Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_alert, null);
+              Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(drawable);
+              style.addImage("reporttwo-geojson", mBitmap);
+
+              GeoJsonSource geoJsonSource = new GeoJsonSource("reporttwo-geojson-source", geoJsonUrl);
+              //geoJsonSource.
+              style.addSource(geoJsonSource);
+              SymbolLayer reporttwoSymbolLayer = new SymbolLayer("reporttwo-symbol-layer-id","reporttwo-geojson-source");
+              reporttwoSymbolLayer.setProperties(PropertyFactory.iconImage("reporttwo-geojson"));
+              reporttwoSymbolLayer.withProperties(iconImage("reporttwo-geojson"),iconAllowOverlap(true),
+                      iconIgnorePlacement(true));
+              style.addLayer(reporttwoSymbolLayer);
+            } catch (URISyntaxException exception) {
+              Log.d("Error: ", exception.getMessage());
+            }
+
+
 
           }
         });

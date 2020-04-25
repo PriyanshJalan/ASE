@@ -58,6 +58,7 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 import static com.mapbox.core.constants.Constants.PRECISION_6;
+import static com.mapbox.mapboxsdk.style.layers.Property.VISIBLE;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
@@ -67,6 +68,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineCap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineColor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineJoin;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility;
 
 public class TrafficReRouting extends AppCompatActivity implements MapboxMap.OnMapClickListener {
 
@@ -83,10 +85,18 @@ public class TrafficReRouting extends AppCompatActivity implements MapboxMap.OnM
     private List<Point> markerLinePointList = new ArrayList<>();
     private int routeIndex;
 
+    /*
     private Point direc_originPoint = Point.fromLngLat(-6.2450408935546875, 53.35372769822772);
     private Point direc_destinationPoint = Point.fromLngLat(-6.33109717302, 53.4116303481);
     private Point emer_originPoint = Point.fromLngLat(-6.33463571889, 53.4305245967);
     private Point emer_destinationPoint = Point.fromLngLat(-6.29261846108, 53.3920439993);
+     */
+    private Point direc_originPoint = Point.fromLngLat(-6.2450408935546875, 53.35372769822772);
+    private Point direc_destinationPoint = Point.fromLngLat(-6.33109717302, 53.4116303481);
+    private Point emer_originPoint = Point.fromLngLat(-6.2450408935546875, 53.35372769822772);
+    private Point emer_destinationPoint = Point.fromLngLat(-6.33109717302, 53.4116303481);
+
+
 
     private Animator currentAnimator;
     private LatLng markerIconCurrentLocation;
@@ -116,60 +126,26 @@ public class TrafficReRouting extends AppCompatActivity implements MapboxMap.OnM
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
                 TrafficReRouting.this.mapboxMap = mapboxMap;
-                mapboxMap.setStyle(Style.LIGHT, new Style.OnStyleLoaded() {
+                mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
 
                         ///////show healthcenter
                         try {
-                            URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/emergency_center/fetch_healthcare");
+                            URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/report/fetch_reports");
                             //Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default);
-                            Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_hospital, null);
+                            Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_alert, null);
                             Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(drawable);
-                            style.addImage("health-geojson", mBitmap);
-                            GeoJsonSource geoJsonSource = new GeoJsonSource("health-geojson-source", geoJsonUrl);
+                            style.addImage("reportone-geojson", mBitmap);
+
+                            GeoJsonSource geoJsonSource = new GeoJsonSource("reportone-geojson-source", geoJsonUrl);
+                            //geoJsonSource.
                             style.addSource(geoJsonSource);
-                            SymbolLayer healthSymbolLayer = new SymbolLayer("health-symbol-layer-id","health-geojson-source");
-                            healthSymbolLayer.setProperties(PropertyFactory.iconImage("health-geojson"));
-                            healthSymbolLayer.withProperties(iconImage("health-geojson"),iconAllowOverlap(true),
+                            SymbolLayer reportoneSymbolLayer = new SymbolLayer("reportone-symbol-layer-id","reportone-geojson-source");
+                            reportoneSymbolLayer.setProperties(PropertyFactory.iconImage("reportone-geojson"));
+                            reportoneSymbolLayer.withProperties(iconImage("reportone-geojson"),iconAllowOverlap(true),
                                     iconIgnorePlacement(true));
-                            style.addLayer(healthSymbolLayer);
-                        } catch (URISyntaxException exception) {
-                            Log.d("Error: ", exception.getMessage());
-                        }
-
-                        ///////fire station
-                        try {
-                            URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/emergency_center/fetch_fire_brigade");
-
-                            Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_firestation, null);
-                            Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(drawable);
-                            style.addImage("fire-geojson", mBitmap);
-                            GeoJsonSource geoJsonSource = new GeoJsonSource("fire-geojson-source", geoJsonUrl);
-                            style.addSource(geoJsonSource);
-                            SymbolLayer fireSymbolLayer = new SymbolLayer("fire-symbol-layer-id","fire-geojson-source");
-                            fireSymbolLayer.setProperties(PropertyFactory.iconImage("fire-geojson"));
-                            fireSymbolLayer.withProperties(iconImage("fire-geojson"),iconAllowOverlap(true),
-                                    iconIgnorePlacement(true));
-                            style.addLayer(fireSymbolLayer);
-                        } catch (URISyntaxException exception) {
-                            Log.d("Error: ", exception.getMessage());
-                        }
-
-                        ///////show garda
-                        try {
-                            URI geoJsonUrl = new URI("http://ec2-46-51-146-5.eu-west-1.compute.amazonaws.com:8080/emergency_center/fetch_garda");
-
-                            Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_garda, null);
-                            Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(drawable);
-                            style.addImage("garda-geojson", mBitmap);
-                            GeoJsonSource geoJsonSource = new GeoJsonSource("garda-geojson-source", geoJsonUrl);
-                            style.addSource(geoJsonSource);
-                            SymbolLayer gardaSymbolLayer = new SymbolLayer("garda-symbol-layer-id","garda-geojson-source");
-                            gardaSymbolLayer.setProperties(PropertyFactory.iconImage("garda-geojson"));
-                            gardaSymbolLayer.withProperties(iconImage("garda-geojson"),iconAllowOverlap(true),
-                                    iconIgnorePlacement(true));
-                            style.addLayer(gardaSymbolLayer);
+                            style.addLayer(reportoneSymbolLayer);
                         } catch (URISyntaxException exception) {
                             Log.d("Error: ", exception.getMessage());
                         }
@@ -179,7 +155,8 @@ public class TrafficReRouting extends AppCompatActivity implements MapboxMap.OnM
                                 .origin(direc_originPoint)
                                 .destination(direc_destinationPoint)
                                 .overview(DirectionsCriteria.OVERVIEW_FULL)
-                                .profile(DirectionsCriteria.PROFILE_DRIVING_TRAFFIC)
+                                .profile(DirectionsCriteria.PROFILE_CYCLING)
+                                //.profile(DirectionsCriteria.PROFILE_DRIVING_TRAFFIC)
                                 .accessToken(getString(R.string.access_token))
                                 .build();
 
@@ -244,7 +221,6 @@ public class TrafficReRouting extends AppCompatActivity implements MapboxMap.OnM
         if(clkCount == 1) {
             getRoute(emer_originPoint,emer_destinationPoint);
         }
-
         return false;
     }
 
@@ -442,6 +418,7 @@ private void animate() {
                 .origin(origin)
                 .destination(destination)
                 .overview(DirectionsCriteria.OVERVIEW_FULL)
+                //.profile(DirectionsCriteria.PROFILE_CYCLING)
                 .profile(DirectionsCriteria.PROFILE_DRIVING_TRAFFIC)
                 .accessToken(getString(R.string.access_token))
                 .build();
@@ -502,7 +479,7 @@ private void animate() {
      */
     private void initSymbolLayer(@NonNull Style loadedMapStyle) {
         loadedMapStyle.addImage("moving-red-marker", Objects.requireNonNull(BitmapUtils.getBitmapFromDrawable(
-                getResources().getDrawable(R.drawable.ic_ambulance))));
+                getResources().getDrawable(R.drawable.ic_car))));
         loadedMapStyle.addLayer(new SymbolLayer("symbol-layer-id", DOT_SOURCE_ID).withProperties(
                 iconImage("moving-red-marker"),
                 iconSize(1f),
